@@ -1,10 +1,10 @@
+import LoginView from "@/views/LoginView.vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 
-import HomeView from "./HomeView.vue";
-import LoginView from "./LoginView.vue";
+LoginView
 
 const routes = [
-  { path: "/", component: HomeView },
+  // { path: "/", component: HomeView },
   { path: "/login", component: LoginView },
 ];
 

@@ -3,6 +3,7 @@ import "./assets/tailwind.css";
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router/route";
+import pinia from "./services/pinia";
 
 
 
@@ -13,6 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add(fas,far)
 const app = createApp(App)
+
 app.component('font-awesome-icon',FontAwesomeIcon)
+app.use(pinia);
 app.use(router);
 app.mount('#app')
