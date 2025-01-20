@@ -45,4 +45,8 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { apiClient } from "@/services/apiClient";
+
+console.log(apiClient.defaults.baseURL);
+</script>
