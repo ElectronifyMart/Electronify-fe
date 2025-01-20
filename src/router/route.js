@@ -1,15 +1,14 @@
 import LoginView from "@/views/LoginView.vue";
-import { createMemoryHistory, createRouter } from "vue-router";
-
-LoginView
+import RegisterView from "@/views/RegisterView.vue";
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
-  // { path: "/", component: HomeView },
   { path: "/login", component: LoginView },
+  { path: "/register", component: RegisterView },
 ];
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 });
 
