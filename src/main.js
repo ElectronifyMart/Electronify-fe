@@ -12,9 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(fas, far);
 const app = createApp(App);
-
 app.use(pinia);
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.use(router);
-
 app.mount("#app");
