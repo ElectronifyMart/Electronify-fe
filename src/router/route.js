@@ -9,7 +9,7 @@ const routes = [
   { path: "/", component: WelcomeView },
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
-  { path: "/products",component:ProductView }
+  { path: "/products",component:ProductView },
   { path: "/admin",component:AdminLayoutView }
 ];
 
