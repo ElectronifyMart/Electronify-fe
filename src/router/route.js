@@ -1,16 +1,16 @@
-import LoginView from "@/views/LoginView.vue";
-import RegisterView from "@/views/RegisterView.vue";
-import WelcomeView from "@/views/WelcomeView.vue";
-import ProductView from "@/views/ProductView.vue";
-import { createRouter, createWebHistory } from "vue-router";
 import AdminLayoutView from "@/views/admin/AdminLayoutView.vue";
+import LoginView from "@/views/LoginView.vue";
+import ProductView from "@/views/ProductView.vue";
+import RegisterView from "@/views/RegisterView.vue";
+import UserLayoutView from "@/views/user/UserLayoutView.vue";
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
-  { path: "/", component: WelcomeView },
+  { path: "/", component: UserLayoutView },
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
-  { path: "/products",component:ProductView },
-  { path: "/admin",component:AdminLayoutView }
+  { path: "/products", component: ProductView },
+  { path: "/admin", component: AdminLayoutView },
 ];
 
 const router = createRouter({
