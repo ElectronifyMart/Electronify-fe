@@ -1,4 +1,5 @@
 import { apiClient } from "@/services/apiClient";
+import VerificationView from "@/views/VerificationView.vue";
 import { defineStore } from "pinia";
 
 export const useAuthStore = defineStore("counter", {
@@ -18,10 +19,13 @@ export const useAuthStore = defineStore("counter", {
     async LoginUser(payload) {
       try {
         const response = await apiClient.post("/auth/login", payload);
+
         return response;
       } catch (error) {
         throw error;
       }
     },
   },
-});
+});   
+
+
