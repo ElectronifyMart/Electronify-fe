@@ -6,6 +6,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import AdminLayoutView from "@/views/admin/AdminLayoutView.vue";
 import ProductLayoutView from "@/views/admin/view/ProductLayoutView.vue";
 import WelcomeAdminView from "@/views/admin/view/WelcomeAdminView.vue";
+import CategoryLayoutView from "@/views/admin/view/CategoryLayoutView.vue";
+import OrderLayoutView from "@/views/admin/view/OrderLayoutView.vue";
 
 const routes = [
   { path: "/", component: WelcomeView },
@@ -24,6 +26,7 @@ const routes = [
       {
         path : 'category',
         name : 'category',
+        component : CategoryLayoutView
       },
       {
         path : 'product',
@@ -33,6 +36,7 @@ const routes = [
       {
         path : 'order-list',
         name : 'order',
+        component : OrderLayoutView
       },
       {
         path : 'role',
