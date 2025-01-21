@@ -9,20 +9,16 @@
     <div
       class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 gap-3 pl-10 max-sm:pl-0 py-3 justify-around"
     >
-      <div class="w-72" v-for="(item, index) in project" :key="item.id">
-        <div class="card bg-base-100 image-full shadow-xl">
+      <div class="w-72" v-for="item in categoryList" :key="item.id">
+        <div class="card flex items-center shadow-xl">
           <figure>
-            <img
-              src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-              alt="Shoes"
-            />
+            <font-awesome-icon :icon="getIconForCategory(item.name)" />
           </figure>
-          <div class="card-body">
-            <h2 class="card-title">{{ item.title }}</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
-            <div class="card-actions justify-end">
-              <button class="btn btn-primary">Buy Now</button>
-            </div>
+          <div class="card-body pl-4">
+            <h2 class="card-title">{{ item.name }}</h2>
+            <p class="w-64">
+              {{ getDescriptionForCategory(item.name) }}
+            </p>
           </div>
         </div>
       </div>
@@ -31,24 +27,67 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { apiClient } from "@/services/apiClient";
+import { onMounted, ref } from "vue";
+
+const categoryList = ref([]);
+const getCategory = async (url = "/category") => {
+  try {
+    const response = await apiClient.get(url);
+    console.log(response);
+    categoryList.value = response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const project = ref([
   {
     id: 2,
-    title: "Handphone",
+    title: "Smartphones",
+    icon: "fa-solid fa-mobile-screen",
+    description: "Berbagai pilihan handphone terbaru dan terlengkap.",
   },
   {
     id: 3,
-    title: "Camera",
+    title: "Laptops",
+    icon: "fa-solid fa-laptop",
+    description: "Laptop untuk pekerjaan, gaming, dan kebutuhan harian Anda.",
   },
   {
     id: 4,
-    title: "Laptop",
+    title: "Gaming",
+    icon: "fa-solid fa-gamepad",
+    description: "Aksesoris dan spare part gaming terbaik untuk Anda.",
   },
   {
     id: 5,
-    title: "Spare Part Gaming",
+    title: "Cameras",
+    icon: "fa-solid fa-camera",
+    description:
+      "Dapatkan kamera berkualitas tinggi untuk kebutuhan fotografi.",
   },
 ]);
+
+const getIconForCategory = (categoryName) => {
+  const category = project.value.find((p) => p.title === categoryName);
+  return category ? category.icon : "fas fa-question-circle"; // fallback icon jika tidak ditemukan
+};
+
+const getDescriptionForCategory = (categoryName) => {
+  const category = project.value.find((p) => p.title === categoryName);
+  return category ? category.description : "Deskripsi tidak tersedia"; // fallback description jika tidak ditemukan
+};
+
+onMounted(() => {
+  getCategory();
+});
 </script>
+
+<style scoped>
+/* .truncate {
+  white-space: no-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */
+</style>
