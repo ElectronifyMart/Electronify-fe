@@ -63,7 +63,7 @@ const handleLogin = async () => {
   try {
     const data = await authStorage.LoginUser(user);
     router.push("/");
-    console.log(data);
+    console.log(data.data.token);
     return data;
   } catch (error) {
     console.log(error);
