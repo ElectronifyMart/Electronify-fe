@@ -48,9 +48,8 @@
 </template>
 
 <script setup>
-import { apiClient } from "@/services/apiClient";
-import { reactive } from "vue";
 import { useAuthStore } from "@/stores/authStorage";
+import { reactive } from "vue";
 import { useRouter } from "vue-router";
 
 const authStorage = useAuthStore();
