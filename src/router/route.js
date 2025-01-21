@@ -1,19 +1,18 @@
-import LoginView from "@/views/LoginView.vue";
-import RegisterView from "@/views/RegisterView.vue";
-import WelcomeView from "@/views/WelcomeView.vue";
-import ProductView from "@/views/ProductView.vue";
-import { createRouter, createWebHistory } from "vue-router";
 import AdminLayoutView from "@/views/admin/AdminLayoutView.vue";
+import LoginView from "@/views/LoginView.vue";
+import ProductView from "@/views/ProductView.vue";
+import RegisterView from "@/views/RegisterView.vue";
+import UserLayoutView from "@/views/user/UserLayoutView.vue";
+import { createRouter, createWebHistory } from "vue-router";
 import ProductLayoutView from "@/views/admin/view/ProductLayoutView.vue";
 import WelcomeAdminView from "@/views/admin/view/WelcomeAdminView.vue";
 import CategoryLayoutView from "@/views/admin/view/CategoryLayoutView.vue";
 import OrderLayoutView from "@/views/admin/view/OrderLayoutView.vue";
 
 const routes = [
-  { path: "/", component: WelcomeView },
+  { path: "/", component: UserLayoutView },
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
-  { path: "/products",component:ProductView },
   { 
     path : '/admin',
     component:AdminLayoutView,
@@ -44,6 +43,7 @@ const routes = [
       },
     ]
    }
+  { path: "/products", component: ProductView },
 ];
 
 const router = createRouter({

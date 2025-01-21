@@ -6,7 +6,7 @@
         <p class="py-6">Lets Explore More With Us!</p>
       </div>
       <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-        <form class="card-body">
+        <form class="card-body" @submit.prevent="handleLogin">
           <div class="form-control">
             <label class="label">
               <span class="label-text">Email</span>
@@ -15,6 +15,7 @@
               type="email"
               placeholder="email"
               class="input input-bordered"
+              v-model="user.email"
               required
             />
           </div>
@@ -26,6 +27,7 @@
               type="password"
               placeholder="password"
               class="input input-bordered"
+              v-model="user.password"
               required
             />
             <label class="label">
@@ -46,7 +48,25 @@
 </template>
 
 <script setup>
-import { apiClient } from "@/services/apiClient";
+import { useAuthStore } from "@/stores/authStorage";
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
 
-console.log(apiClient.defaults.baseURL);
+const authStorage = useAuthStore();
+const router = useRouter();
+const user = reactive({
+  email: "",
+  password: "",
+});
+
+const handleLogin = async () => {
+  try {
+    const data = await authStorage.LoginUser(user);
+    router.push("/");
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
