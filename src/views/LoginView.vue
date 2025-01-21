@@ -48,9 +48,8 @@
 </template>
 
 <script setup>
-import { apiClient } from "@/services/apiClient";
-import { reactive } from "vue";
 import { useAuthStore } from "@/stores/authStorage";
+import { reactive } from "vue";
 import { useRouter } from "vue-router";
 
 const authStorage = useAuthStore();
@@ -64,7 +63,7 @@ const handleLogin = async () => {
   try {
     const data = await authStorage.LoginUser(user);
     router.push("/");
-    console.log(data);
+    console.log(data.data.token);
     return data;
   } catch (error) {
     console.log(error);

@@ -1,12 +1,9 @@
 import { apiClient } from "@/services/apiClient";
-import VerificationView from "@/views/VerificationView.vue";
 import { defineStore } from "pinia";
 
 export const useAuthStore = defineStore("counter", {
   state: () => ({ save: { token: "token", user: "user" } }),
-  persist: {
-    pick: ["save.token", "save.user"],
-  },
+  persist: true,
   actions: {
     async RegisterUser(payload) {
       try {
@@ -25,6 +22,22 @@ export const useAuthStore = defineStore("counter", {
         throw error;
       }
     },
+    async VerificationView(payload) {
+      try {
+        const response = await apiClient.post("/auth/verification", payload);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+    async generateotp(payload) {
+      try {
+        const response = await apiClient.post("/auth/generate", payload);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    }
   },
 });   
 
