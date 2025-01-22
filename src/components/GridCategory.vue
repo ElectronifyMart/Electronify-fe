@@ -1,12 +1,20 @@
 <template>
   <section class="">
-    <h1 class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left">
+    <h1
+      class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left"
+    >
       Recommended Category
     </h1>
 
     <div
-      class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 gap-3 pl-10 max-sm:pl-0 py-3 justify-around">
-      <div v-if="!lazyLoad" class="w-72" v-for="item in categoryList" :key="item.id">
+      class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 gap-3 pl-10 max-sm:pl-0 py-3 justify-around"
+    >
+      <div
+        v-if="!lazyLoad"
+        class="w-72"
+        v-for="item in categoryList"
+        :key="item.id"
+      >
         <div class="card flex items-center shadow-xl">
           <figure>
             <font-awesome-icon :icon="getIconForCategory(item.name)" />
@@ -35,22 +43,21 @@
 import { apiClient } from "@/services/apiClient";
 import { onMounted, ref } from "vue";
 
-const lazyLoad = ref(false)
+const lazyLoad = ref(false);
 
 const categoryList = ref([]);
-const getCategory = async (url = "/category") => {
-  lazyLoad.value = !lazyLoad.value
+const getCategory = async (url = "/category?limit=4") => {
+  lazyLoad.value = !lazyLoad.value;
   try {
     const response = await apiClient.get(url);
     console.log(response);
-    categoryList.value = response.data.data;
+    categoryList.value = response.data.data.slice(0, 4);
   } catch (error) {
     throw error;
   } finally {
-    lazyLoad.value = !lazyLoad.value
+    lazyLoad.value = !lazyLoad.value;
   }
 };
-
 
 const project = ref([
   {

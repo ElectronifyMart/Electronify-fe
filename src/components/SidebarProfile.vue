@@ -4,11 +4,12 @@
       <div
         class="fixed grid md:grid-cols-[1fr,auto] max-md:grid-flow-row right-0 max-md:right-72 z-10"
         v-if="isProfile"
+        dir="ltr"
       >
         <aside
           class="border h-96 w-74 bg-white md:sticky top-0 fixed z-10 transition-all duration-300"
         >
-          <div class="w-full h-full">
+          <div class="w-full h-full rounded-s-lg">
             <div class="mt-5 mb-10">
               <button class="flex pb-3 ml-auto" @click="closeSidebar">
                 <font-awesome-icon

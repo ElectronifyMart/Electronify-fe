@@ -11,12 +11,12 @@
     >
       <div
         v-if="skeleton"
-        class="w-58"
+        class="w-58 shadow-xl"
         v-for="item in productList"
         :key="item.id"
       >
         <div class="card">
-          <div class="h-48 overflow-hidden w-full border">
+          <div class="h-48 overflow-hidden w-full">
             <img
               :src="item.image"
               alt="Shoes"

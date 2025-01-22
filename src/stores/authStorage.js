@@ -126,6 +126,7 @@ export const useAuthStore = defineStore("counter", () => {
   return {
     LoginUser,
     RegisterUser,
+    tokenUser,
     generateOtpCode,
     verifikasiAccount,
     currentUser,
