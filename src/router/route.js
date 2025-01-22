@@ -11,6 +11,7 @@ import VerificationView from "@/views/VerificationView.vue";
 
 import UserLayoutView from "@/views/user/UserLayoutView.vue";
 
+import DetailProductView from "@/views/user/DetailProductView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
@@ -18,6 +19,7 @@ const routes = [
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
   { path: "/verification", component: VerificationView },
+  { path: "/detail", component: DetailProductView },
 
   {
     path: "/admin",
@@ -46,7 +48,7 @@ const routes = [
       {
         path: "role",
         name: "role",
-        component : RoleLayoutView
+        component: RoleLayoutView,
       },
     ],
   },
