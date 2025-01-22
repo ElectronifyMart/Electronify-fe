@@ -7,13 +7,18 @@ import WelcomeAdminView from "@/views/admin/view/WelcomeAdminView.vue";
 import LoginView from "@/views/LoginView.vue";
 import ProductView from "@/views/ProductView.vue";
 import RegisterView from "@/views/RegisterView.vue";
+import VerificationView from "@/views/VerificationView.vue";
+
 import UserLayoutView from "@/views/user/UserLayoutView.vue";
+
 import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   { path: "/", component: UserLayoutView },
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
+  { path: "/verification", component: VerificationView },
+
   {
     path: "/admin",
     component: AdminLayoutView,

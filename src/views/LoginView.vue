@@ -61,11 +61,11 @@ const user = reactive({
 
 const handleLogin = async () => {
   try {
-    const data = await authStorage.LoginUser(user);
-    console.log(data);
-    return data;
+    authStorage.LoginUser(user);
+    console.log(user);
   } catch (error) {
     console.log(error);
+    alert(error);
   }
 };
 </script>
