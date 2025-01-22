@@ -1,9 +1,9 @@
 <template>
-    <CategoriModal></CategoriModal>
+    <CategoriModal :is-open="isOpen" @close="closeModalCategori"></CategoriModal>
     <header>
         <div class="w-full flex justify-between items-center py-4">
             <h1 class="text-2xl font-semibold">List Category</h1>
-            <button class="btn btn-primary" type="button" @click="openModalProduct">
+            <button class="btn btn-primary" type="button" @click="openModalCategori">
                 Add category
             </button>
         </div>
@@ -15,8 +15,8 @@
             </label>
             <input id="search" type="text" placeholder="Type here" class="input input-bordered w-full max-w-xs pl-8" />
         </div>
-        <div class="w-full">
-            <EasyDataTable :headers="headers" :items="items" :search-field="searchField" :search-value="searchValue"
+        <div v-if="categories.length > 0" class="w-full">
+            <EasyDataTable :headers="headers" :items="categories"
                 table-class-name="customize-table" alternating>
                 <template #item-action>
                     <button class="btn btn-outline btn-info btn-sm">
@@ -29,36 +29,44 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, computed} from 'vue';
 import CategoriModal from "@/components/modal/CategoriModal.vue";
+import { apiClient } from '@/services/apiClient';
 const headers = [
     { text: "NAME", value: "name" },
     { text: "ACTION", value: "action" },
 ];
 
-const items = [
-    {
-        name: "Laptop",
-    },
-    {
-        name: "Handphone",
-    },
-    {
-        name: "Earphone",
-    },
-    {
-        name: "Keyboard",
-    },
-    {
-        name: "PC",
-    },
-    {
-        name: "Hardware",
-    },
-];
+const categories = ref ({
+    
+})
 
 const searchField = ref("name");
 const searchValue = ref("");
+const isOpen = ref(false);
+const openModalCategori = ()=>{ 
+    isOpen.value = !isOpen.value;
+}
+const closeModalCategori = (data)=>{
+    isOpen.value = data;
+}
+
+const getCategori = async () => {
+    try {
+        const respons = await apiClient.get('category') 
+        categories.value = respons.data.data.map(item => ({
+            name: item.name,
+        }));    
+        console.log(categories.value);
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+onMounted (async() => {
+    await getCategori() 
+}) 
 </script>
 
 <style scoped>

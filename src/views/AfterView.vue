@@ -47,7 +47,7 @@ export default {
             this.notification = message;
             setTimeout(() => {
                 this.notification = null;
-            }, 3000); // Hide notification after 3 seconds
+            }, 3000); 
         },
     },
 };
