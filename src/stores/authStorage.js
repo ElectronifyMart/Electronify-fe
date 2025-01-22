@@ -107,11 +107,28 @@ export const useAuthStore = defineStore("counter", () => {
     }
   };
 
+  const LogoutUser = async () => {
+    try {
+      await apiClient.post("/logout", "", {
+        headers: {
+          Authorization: `Bearer ${tokenUser.value}`,
+        },
+      });
+
+      tokenUser.value = null;
+      currentUser.value = null;
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    } catch (error) {}
+  };
+
   return {
     LoginUser,
     RegisterUser,
     generateOtpCode,
     verifikasiAccount,
     currentUser,
+    LogoutUser,
   };
 });
