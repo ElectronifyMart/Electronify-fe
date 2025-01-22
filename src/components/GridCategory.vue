@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="flex flex-row gap-x-10">
+      <div v-else class="flex flex-row gap-16">
         <div class="flex w-72 flex-col gap-4" v-for="num in 3">
           <div class="skeleton h-32 w-full"></div>
           <div class="skeleton h-4 w-28"></div>
