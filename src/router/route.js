@@ -7,6 +7,7 @@ import LoginView from "@/views/LoginView.vue";
 import ProductView from "@/views/ProductView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import VerificationView from "@/views/VerificationView.vue";
+import AfterView from "@/views/AfterView.vue";
 
 import UserLayoutView from "@/views/user/UserLayoutView.vue";
 
@@ -17,6 +18,7 @@ const routes = [
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
   { path: "/verification", component: VerificationView },
+  { path: "/after", component: AfterView },
 
   {
     path: "/admin",

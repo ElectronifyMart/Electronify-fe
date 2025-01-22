@@ -1,4 +1,5 @@
 <template>
+    <CategoriModal></CategoriModal>
     <header>
         <div class="w-full flex justify-between items-center py-4">
             <h1 class="text-2xl font-semibold">List Category</h1>
@@ -16,9 +17,9 @@
         </div>
         <div class="w-full">
             <EasyDataTable :headers="headers" :items="items" :search-field="searchField" :search-value="searchValue"
-                table-class-name="customize-table"alternating>
+                table-class-name="customize-table" alternating>
                 <template #item-action>
-                    <button  class="btn btn-outline btn-info btn-sm">
+                    <button class="btn btn-outline btn-info btn-sm">
                         <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                     </button>
                 </template>
@@ -29,6 +30,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import CategoriModal from "@/components/modal/CategoriModal.vue";
 const headers = [
     { text: "NAME", value: "name" },
     { text: "ACTION", value: "action" },
@@ -60,7 +62,7 @@ const searchValue = ref("");
 </script>
 
 <style scoped>
-.customize-table{
-    --easy-table-body-item-padding : 10px;
+.customize-table {
+    --easy-table-body-item-padding: 10px;
 }
 </style>

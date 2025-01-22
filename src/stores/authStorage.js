@@ -2,8 +2,15 @@ import { apiClient } from "@/services/apiClient";
 import { defineStore } from "pinia";
 
 export const useAuthStore = defineStore("counter", {
-  state: () => ({ save: { token: "token", user: "user" } }),
-  persist: true,
+  state: () => (
+    {
+      test: 'test'
+    }
+  ),
+  persist: 
+  {
+    keys: ['test']
+  },
   actions: {
     async RegisterUser(payload) {
       try {
@@ -33,6 +40,14 @@ export const useAuthStore = defineStore("counter", {
     async generateotp(payload) {
       try {
         const response = await apiClient.post("/auth/generate", payload);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+    async AfterView(payload) {
+      try {
+        const response = await apiClient.post("/auth/after", payload);
         return response;
       } catch (error) {
         throw error;
