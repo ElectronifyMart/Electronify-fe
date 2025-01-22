@@ -15,6 +15,8 @@ import "vue3-easy-data-table/dist/style.css";
 library.add(fas, far);
 const app = createApp(App);
 const pinia = createPinia();
+
+app.use(router)
 app.use(pinia);
 app.component("EasyDataTable", Vue3EasyDataTable);
 app.component("font-awesome-icon", FontAwesomeIcon);
