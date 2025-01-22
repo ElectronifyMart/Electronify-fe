@@ -19,5 +19,5 @@ app.use(pinia);
 app.component("EasyDataTable", Vue3EasyDataTable);
 app.component("font-awesome-icon", FontAwesomeIcon);
 
-app.use(router);
+
 app.mount("#app");

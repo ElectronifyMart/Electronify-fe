@@ -2,6 +2,7 @@ import AdminLayoutView from "@/views/admin/AdminLayoutView.vue";
 import CategoryLayoutView from "@/views/admin/view/CategoryLayoutView.vue";
 import OrderLayoutView from "@/views/admin/view/OrderLayoutView.vue";
 import ProductLayoutView from "@/views/admin/view/ProductLayoutView.vue";
+import RoleLayoutView from "@/views/admin/view/RoleLayoutView.vue";
 import WelcomeAdminView from "@/views/admin/view/WelcomeAdminView.vue";
 import LoginView from "@/views/LoginView.vue";
 import ProductView from "@/views/ProductView.vue";
@@ -45,6 +46,7 @@ const routes = [
       {
         path: "role",
         name: "role",
+        component : RoleLayoutView
       },
     ],
   },
