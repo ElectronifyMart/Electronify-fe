@@ -1,5 +1,5 @@
 <template>
-  <OrderModal :is-open="isOpen" :product="detailProduct"/>
+  <OrderModal :is-open="isOpen" :product="detailProduct" @close="closeModalOrder"/>
   <section>
     <h1 class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left">
       Product
@@ -81,6 +81,10 @@ const getProduct = async ()=>{
   }finally{
     isLoading.value = !isLoading.value
   }
+}
+
+const closeModalOrder = (data)=>{
+  isOpen.value = !data
 }
 
 onMounted(async ()=>{
