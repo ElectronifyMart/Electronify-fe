@@ -24,18 +24,38 @@
             />
           </div>
           <div class="card-body">
-            <h2 class="card-title">{{ item.name }}</h2>
-            <p>{{ item.description }}</p>
+            <h2
+              class="card-title overflow-hidden text-ellipsis whitespace-nowrap"
+            >
+              {{ item.name }}
+            </h2>
+            <p class="overflow-hidden text-ellipsis whitespace-nowrap">
+              {{ item.description }}
+            </p>
             <p>{{ item.stock }}</p>
             <div class="card-actions justify-between">
               <h2>Rp. {{ item.price }}</h2>
-              <button
-                class="btn btn-primary"
-                type="button"
-                @click="order(item)"
-              >
-                Buy Now
-              </button>
+
+              <div>
+                <button
+                  class="btn btn-success m-1"
+                  type="button"
+                  @click="order(item)"
+                >
+                  Buy Now
+                </button>
+                <button
+                  class="btn btn-neutral"
+                  type="button"
+                  @click="detailProduct(item.id)"
+                >
+                  Detail
+                </button>
+
+                <button class="btn btn-info w-full" type="button">
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +76,11 @@
 import { apiClient } from "@/services/apiClient";
 import { usePaymentStore } from "@/stores/paymentStore";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const id = ref({
+  id: "",
+});
 
 const storePayment = usePaymentStore();
 
@@ -72,6 +97,10 @@ const getProduct = async (url = "/product") => {
   } finally {
     skeleton.value = !skeleton.value;
   }
+};
+
+const detailProduct = (id) => {
+  router.push({ name: "DetailProduct", params: { id: id } });
 };
 
 const order = async (data) => {
