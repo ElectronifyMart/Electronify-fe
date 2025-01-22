@@ -1,6 +1,6 @@
 <template>
   <section
-    class="flex w-full overflow-hidden justify-center items-center mt-24"
+    class="flex w-full overflow-hidden justify-center items-center pt-24"
   >
     <div
       class="card carousel xl:w-[1024px] lg:w-[800px] md:w-[650px] xs:w-[380px]"

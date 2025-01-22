@@ -47,7 +47,7 @@
                         </div>
                         <input type="number" v-model="payload.quantity" class="hidden">
                     </div>
-                    <button
+                    <button @click="order"
                         class="w-full h-10 bg-primary rounded text-white hover:bg-indigo-700 transition-colors duration-300"
                         type="submit">Order</button>
                 </form>
@@ -72,12 +72,18 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close','order'])
 
-const products = computed(() => props.product);
+const products = computed(() => {
+    console.log(props.product);
+    return props.product
+    
+});
 
 const payload = reactive({
-    quantity: 0
+    quantity: 0,
+    fname : '',
+    ltname : ''
 })
 
 const qtIncrement = () => {
@@ -89,6 +95,12 @@ const qtDecrement = () => {
 
 const close = (data = false) => {
     emits('close', data)
+}
+
+const order = ()=>{
+    emits('order',{
+
+    })
 }
 
 watch(() => payload.quantity, () => {
