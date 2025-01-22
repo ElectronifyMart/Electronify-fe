@@ -1,11 +1,13 @@
 import { apiClient } from "@/services/apiClient";
 import { defineStore } from "pinia";
 
-export const useAuthStore = defineStore("counter", {
-  state: () => ({ save: { token: "token", user: "user" } }),
-  persist: {
-    pick: ["save.token", "save.user"],
-  },
+export const useAuthStore = defineStore("auth", {
+  state: () => ({
+    someState: 'hello pinia',
+  }),
+  
+  persist : true,
+
   actions: {
     async RegisterUser(payload) {
       try {

@@ -14,10 +14,12 @@ import 'vue3-easy-data-table/dist/style.css';
 
 library.add(fas, far);
 const app = createApp(App);
-app.use(pinia);
+
+app.use(pinia)
+app.use(router);
 
 app.component('EasyDataTable', Vue3EasyDataTable);
 app.component("font-awesome-icon", FontAwesomeIcon);
 
-app.use(router);
+
 app.mount("#app");

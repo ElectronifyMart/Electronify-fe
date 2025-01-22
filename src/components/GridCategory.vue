@@ -1,15 +1,12 @@
 <template>
   <section class="">
-    <h1
-      class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left"
-    >
+    <h1 class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left">
       Recommended Category
     </h1>
 
     <div
-      class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 gap-3 pl-10 max-sm:pl-0 py-3 justify-around"
-    >
-      <div class="w-72" v-for="item in categoryList" :key="item.id">
+      class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 gap-3 pl-10 max-sm:pl-0 py-3 justify-around">
+      <div v-if="!lazyLoad" class="w-72" v-for="item in categoryList" :key="item.id">
         <div class="card flex items-center shadow-xl">
           <figure>
             <font-awesome-icon :icon="getIconForCategory(item.name)" />
@@ -22,6 +19,14 @@
           </div>
         </div>
       </div>
+      <div v-else class="flex flex-row gap-x-10">
+        <div class="flex w-72 flex-col gap-4" v-for="num in 3">
+          <div class="skeleton h-32 w-full"></div>
+          <div class="skeleton h-4 w-28"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-full"></div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -30,16 +35,22 @@
 import { apiClient } from "@/services/apiClient";
 import { onMounted, ref } from "vue";
 
+const lazyLoad = ref(false)
+
 const categoryList = ref([]);
 const getCategory = async (url = "/category") => {
+  lazyLoad.value = !lazyLoad.value
   try {
     const response = await apiClient.get(url);
     console.log(response);
     categoryList.value = response.data.data;
   } catch (error) {
     throw error;
+  } finally {
+    lazyLoad.value = !lazyLoad.value
   }
 };
+
 
 const project = ref([
   {

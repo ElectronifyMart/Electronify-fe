@@ -62,7 +62,6 @@ const user = reactive({
 const handleLogin = async () => {
   try {
     const data = await authStorage.LoginUser(user);
-    router.push("/");
     console.log(data);
     return data;
   } catch (error) {
