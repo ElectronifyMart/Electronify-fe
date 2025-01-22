@@ -19,7 +19,7 @@ const routes = [
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
   { path: "/verification", component: VerificationView },
-  { path: "/detail", component: DetailProductView },
+  { path: "/detail/:id", component: DetailProductView, name: "DetailProduct" },
 
   {
     path: "/admin",
