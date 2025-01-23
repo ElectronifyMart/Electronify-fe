@@ -3,6 +3,7 @@
     :is-open="isOpen"
     :product="detailsProduct"
     @close="closeModalOrder"
+    @order="createOrder"
   />
   <section>
     <h1
@@ -80,7 +81,7 @@ import imgList2 from "@/assets/imgList2.png";
 import formatterRupiah from "@/services/formatterRupiah";
 import { usePaymentStore } from "@/stores/paymentStore";
 import { useProductStore } from "@/stores/productStore";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import OrderModal from "./modal/OrderModal.vue";
 const router = useRouter();
@@ -91,30 +92,41 @@ const productStore = useProductStore();
 const isLoading = ref(false);
 const detailsProduct = ref({});
 const isOpen = ref(false);
-const search = ref(null);
-
-const handleSearch = () => {
-  getProduct("/movie");
-};
 
 const order = async (data) => {
   detailsProduct.value = data;
   isOpen.value = !isOpen.value;
+};
 
+const createOrder = async (data) => {
+  data.address = "bandung";
+  data.email = "rahman@mail.com";
+  console.log(data);
   try {
-    // const checkoutPayload = {
-    //   first_name : 'rahman',
-    //   last_name : 'hayadi',
-    //   address :'bandung',
-    //   email : 'rahman@mail.com',
-    //   quantity : 10,
-    //   product_name : data.title,
-    //   price : data.price
-    // };
-    // const response = await storePayment.order(checkoutPayload)
-    // console.log(response);
-    // await window.snap.pay(response.data.token);
-  } catch {}
+    const response = await storePayment.order(data);
+    console.log(response);
+    await window.snap.pay(response.data.token, {
+      onSuccess: function (result) {
+        console.log("success");
+        console.log(result);
+      },
+      onPending: function (result) {
+        console.log("pending");
+        console.log(result);
+      },
+      onError: function (result) {
+        console.log("error");
+        console.log(result);
+      },
+      onClose: function () {
+        console.log("customer closed the popup without finishing the payment");
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const detailProduct = (id) => {
@@ -123,19 +135,10 @@ const detailProduct = (id) => {
 
 const products = ref([]);
 
-const getProduct = async (url = "/movie") => {
+const getProduct = async () => {
   isLoading.value = !isLoading.value;
   try {
-    let finalUrl = url;
-    const hasParams = url.includes("?");
-
-    if (search.value) {
-      finalUrl += hasParams
-        ? `&search=${search.value}`
-        : `?search=${search.value}`;
-    }
-    console.log("Final URL: ", finalUrl);
-    const response = await productStore.getProducts(finalUrl);
+    const response = await productStore.getProducts();
     products.value = response.data;
 
     console.log(response);
@@ -145,15 +148,6 @@ const getProduct = async (url = "/movie") => {
     isLoading.value = false;
   }
 };
-
-const filteredProducts = computed(() => {
-  return productStore.searchQuery
-    ? products.value.filter((item) => console.log(item))
-    : products.value;
-
-  //   item.name.toLowerCase().includes(productStore.searchQuery.toLowerCase)
-  // )
-});
 
 const closeModalOrder = (data) => {
   isOpen.value = !data;

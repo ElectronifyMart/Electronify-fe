@@ -2,9 +2,7 @@ import { apiClient } from "@/services/apiClient";
 import { defineStore } from "pinia";
 
 export const useProductStore = defineStore("products", {
-  state: () => ({
-    searchQuery: "",
-  }),
+  state: () => ({}),
   actions: {
     async createProduct(payload) {
       try {
@@ -23,9 +21,6 @@ export const useProductStore = defineStore("products", {
       } catch (error) {
         throw error;
       }
-    },
-    updateSearchQuery(query) {
-      this.searchQuery = query;
     },
   },
 });

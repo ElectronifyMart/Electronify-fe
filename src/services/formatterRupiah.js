@@ -12,10 +12,10 @@ const formatRupiah = (value) => {
 };
 
 const convertToNumber = (str) => {
-  if (!str) return null;
+  if (!str) return null; // Return 0 for empty strings
   const cleanedStr = str.replace(/\./g, "");
   const number = parseInt(cleanedStr, 10);
-  return isNaN(number) ? 0 : number;
+  return isNaN(number) ? 0 : number; // Ensure no NaN value
 };
 
 export default { formatPriceToIDR, formatRupiah, convertToNumber };
