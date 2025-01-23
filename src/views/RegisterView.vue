@@ -96,7 +96,10 @@
           </div>
           <div class="form-control mt-6">
             <button class="btn btn-primary">
-              <font-awesome-icon icon="fa-solid fa-user" /> Login
+              <span v-if="!isLoading"
+                ><font-awesome-icon icon="fa-solid fa-user" /> Register</span
+              >
+              <span v-else class="loading loading-infinity loading-lg"></span>
             </button>
           </div>
         </form>
@@ -105,9 +108,13 @@
   </div>
 </template>
 <script setup>
+import router from "@/router/route";
 import { useAuthStore } from "@/stores/authStorage";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 const authStorage = useAuthStore();
+const isLoading = ref(false);
+const alertMessage = ref(null);
+const alertType = ref(null);
 const user = reactive({
   name: "",
   email: "",
@@ -115,19 +122,20 @@ const user = reactive({
   password_confirmation: "",
 });
 const handleRegist = async () => {
+  isLoading.value = !isLoading.value;
   try {
     const response = await authStorage.RegisterUser(user);
-    alertMessage.value = response.message || "Login successful";
+    alertMessage.value = "Register successful";
     alertType.value = "success";
     setTimeout(() => {
       alertMessage.value = "";
       alertType.value = "";
       router.push("/login");
-    }, 1500);
-    authStorage.generateOtpCode(authStorage.currentUser.email);
+    }, 500);
+    // authStorage.generateOtpCode(authStorage.currentUser.email);
   } catch (error) {
     alertMessage.value =
-      error.response?.data?.message || "An error occurred during login.";
+      error.response?.data?.message || "An error occurred during register.";
     alertType.value = "error";
 
     setTimeout(() => {
@@ -135,6 +143,8 @@ const handleRegist = async () => {
       alertType.value = "";
     }, 3000);
     console.log(error);
+  } finally {
+    isLoading.value = !isLoading.value;
   }
 };
 </script>

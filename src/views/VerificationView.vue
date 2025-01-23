@@ -1,4 +1,5 @@
 <template>
+  <NavbarUser />
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="card bg-white shadow-lg p-6 rounded-lg max-w-sm w-full">
       <h1 class="text-2xl font-semibold text-center text-gray-800 mb-4">
@@ -28,6 +29,7 @@
 </template>
 
 <script setup>
+import NavbarUser from "@/components/NavbarUser.vue";
 import { useAuthStore } from "@/stores/authStorage";
 import { ref } from "vue";
 

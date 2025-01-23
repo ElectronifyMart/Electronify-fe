@@ -74,7 +74,10 @@
           </div>
           <div class="form-control mt-6">
             <button class="btn btn-primary" severity="secondary">
-              <font-awesome-icon icon="fa-solid fa-user" /> Login
+              <span v-if="!isLoading"
+                ><font-awesome-icon icon="fa-solid fa-user" /> Login</span
+              >
+              <span v-else class="loading loading-infinity loading-lg"></span>
             </button>
           </div>
         </form>
@@ -89,6 +92,7 @@ import { useAuthStore } from "@/stores/authStorage";
 import { reactive, ref } from "vue";
 
 const authStorage = useAuthStore();
+const isLoading = ref(false);
 
 const user = reactive({
   email: "",
@@ -99,19 +103,18 @@ const alertMessage = ref(null);
 const alertType = ref(null);
 
 const handleLogin = async () => {
+  isLoading.value = !isLoading.value;
   try {
     const response = await authStorage.LoginUser(user);
-    alertMessage.value = response.message || "Login successful";
+    alertMessage.value = "Login successful";
     alertType.value = "success";
     setTimeout(() => {
       alertMessage.value = "";
       alertType.value = "";
       router.push("/");
-    }, 1500);
-    console.log(response);
+    }, 500);
   } catch (error) {
-    alertMessage.value =
-      error.response?.data?.message || "An error occurred during login.";
+    alertMessage.value = "An error occurred during login.";
     alertType.value = "error";
 
     setTimeout(() => {
@@ -119,6 +122,8 @@ const handleLogin = async () => {
       alertType.value = "";
     }, 3000);
     console.error(error);
+  } finally {
+    isLoading.value = !isLoading.value;
   }
 };
 </script>

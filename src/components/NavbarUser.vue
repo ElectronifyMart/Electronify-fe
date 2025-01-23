@@ -120,6 +120,7 @@
   </section>
 </template>
 <script setup>
+import router from "@/router/route";
 import { useAuthStore } from "@/stores/authStorage";
 import { useProductStore } from "@/stores/productStore";
 import { computed } from "vue";
@@ -139,7 +140,15 @@ const searchQuery = computed({
 });
 
 const showSidebar = () => {
-  emit("sidebar", true);
+  if (store.tokenUser == null) {
+    alert("Belum Login");
+    router.replace("/");
+  } else if (store.currentUser.email_verified_at == null) {
+    alert("Belum Verifikasi");
+    router.replace("/verification");
+  } else {
+    emit("sidebar", true);
+  }
 };
 
 const handleLogout = async () => {

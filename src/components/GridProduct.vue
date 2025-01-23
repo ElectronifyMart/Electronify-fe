@@ -75,6 +75,7 @@
 <script setup>
 import imgList2 from "@/assets/imgList2.png";
 import formatterRupiah from "@/services/formatterRupiah";
+import { useAuthStore } from "@/stores/authStorage";
 import { usePaymentStore } from "@/stores/paymentStore";
 import { useProductStore } from "@/stores/productStore";
 import { onMounted, ref } from "vue";
@@ -84,14 +85,23 @@ const router = useRouter();
 
 const storePayment = usePaymentStore();
 const productStore = useProductStore();
+const store = useAuthStore();
 
 const isLoading = ref(false);
 const detailsProduct = ref({});
 const isOpen = ref(false);
 
 const order = async (data) => {
-  detailsProduct.value = data;
-  isOpen.value = !isOpen.value;
+  if (store.tokenUser == null) {
+    alert("Belum Login");
+    router.replace("/login");
+  } else if (store.currentUser.email_verified_at == null) {
+    alert("Belum Verifikasi");
+    router.replace("/verification");
+  } else {
+    detailsProduct.value = data;
+    isOpen.value = !isOpen.value;
+  }
 };
 
 const createOrder = async (data) => {

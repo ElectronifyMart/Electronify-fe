@@ -56,7 +56,6 @@ export const useAuthStore = defineStore("counter", () => {
       });
 
       console.log(data);
-      router.replace("/login");
     } catch (error) {
       console.log(error);
     }
