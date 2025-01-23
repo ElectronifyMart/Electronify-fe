@@ -9,7 +9,7 @@
                 </svg>
             </button>
         </div>
-        <div class="w-96 flex flex-col bg-slate-50 box-border">
+        <div class="w-96 flex flex-col bg-slate-50 box-border overflow-auto">
             <div class="flex flex-col gap-">
                 <div class="w-full h-44 overflow-hidden">
                     <img :src="product.image ?? img" alt="" class="w-full h-full object-cover" />
@@ -17,9 +17,17 @@
                 <div class="flex flex-col px-2 py-2 gap-2">
                     <div class="flex flex-row items-center justify-between">
                         <h1 class="text-2xl font-bold">{{ products.name }}</h1>
-                        <h1 class="font-semibold h-full flex items-center">{{ formatterRupiah.formatPriceToIDR(products.price) }}</h1>
+                        <h1 class="font-semibold h-full flex items-center">
+                            {{ formatterRupiah.formatPriceToIDR(products.price) }}</h1>
                     </div>
-                    <p class="text-sm">{{ product.description ?? 'Description not available' }}</p>
+                    <p class="text-sm text-end">Total price: {{ formatterRupiah.formatPriceToIDR(total_price) }}</p>
+                    <p class="text-sm">{{ displayedDescription }}
+                        <span v-if="isTruncated">...</span>
+                        <button v-if="product.description?.split(' ').length > 20" @click="toggleDescription"
+                            class="text-blue-500 underline">
+                            {{ isTruncated ? "Read More" : "Read Less" }}
+                        </button>
+                    </p>
                 </div>
                 <div class="flex justify-end px-2">
                     <div class="flex flex-row gap-2">
@@ -35,19 +43,26 @@
             </div>
             <div class="w-full box-border p-2 flex flex-col gap-2">
                 <h1 class="text-xl font-semibold border-b">Your Information:</h1>
-                <form action="#" class="w-full box-border flex flex-col gap-4">
+                <form @submit.prevent="order" class="w-full box-border flex flex-col gap-4">
                     <div class="flex flex-row gap-2">
                         <div class="flex flex-col w-1/2">
                             <label for="fname">Firstname</label>
-                            <input class="focus:outline-none h-10 rounded pl-2 w-full border" type="text" id="fname" />
+                            <input v-model="payload.fname" class="focus:outline-none h-10 rounded pl-2 w-full border"
+                                type="text" id="fname" />
                         </div>
                         <div class="flex flex-col w-1/2">
                             <label for="lname">Lastname</label>
-                            <input class="focus:outline-none h-10 rounded pl-2 w-full border" type="text" id="lname" />
+                            <input v-model="payload.ltname" class="focus:outline-none h-10 rounded pl-2 w-full border"
+                                type="text" id="lname" />
                         </div>
                         <input type="number" v-model="payload.quantity" class="hidden">
                     </div>
-                    <button @click="order"
+                    <div class="flex flex-col w-full">
+                        <label for="adddress">Address</label>
+                        <input v-model="payload.address" class="focus:outline-none h-10 rounded pl-2 w-full border"
+                            type="text" id="adddress" />
+                    </div>
+                    <button
                         class="w-full h-10 bg-primary rounded text-white hover:bg-indigo-700 transition-colors duration-300"
                         type="submit">Order</button>
                 </form>
@@ -57,7 +72,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, watch } from "vue";
+import { computed, reactive, watch, ref } from "vue";
 import img from "@/assets/imgList2.png";
 import formatterRupiah from "@/services/formatterRupiah";
 
@@ -72,19 +87,23 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['close','order'])
+const emits = defineEmits(['close', 'order'])
 
 const products = computed(() => {
     console.log(props.product);
     return props.product
-    
+
 });
 
 const payload = reactive({
-    quantity: 0,
-    fname : '',
-    ltname : ''
+    quantity: 1,
+    fname: '',
+    ltname: '',
+    address: '',
+    price: props.product.price
 })
+
+const total_price = computed(() => payload.price * payload.quantity)
 
 const qtIncrement = () => {
     return payload.quantity++
@@ -93,19 +112,50 @@ const qtDecrement = () => {
     return payload.quantity--
 }
 
+const isTruncated = ref(true);
+
+const displayedDescription = computed(() => {
+    if (isTruncated.value && props.product.description) {
+        return props.product.description.split(" ").slice(0, 50).join(" ");
+    }
+    return props.product.description;
+});
+
+const toggleDescription = () => {
+    isTruncated.value = !isTruncated.value;
+};
+
 const close = (data = false) => {
     emits('close', data)
+    payload.quantity = 1,
+        payload.fname = ''
+    payload.ltname = ''
+    payload.address = ''
 }
 
-const order = ()=>{
-    emits('order',{
-
+const order = () => {
+    emits('order', {
+        'first_name': payload.fname,
+        'last_name': payload.ltname,
+        'quantity': payload.quantity,
+        'product_name': props.product.name,
+        'product_id': props.product.id,
+        'price': props.product.price,
+        'total_price': payload.total_price
     })
 }
 
+watch(() => props.product, (newProduct) => {
+    if (newProduct?.price) {
+        payload.price = newProduct.price;
+    }else{
+        payload.price = 1000
+    }
+}, { deep: true })
+
 watch(() => payload.quantity, () => {
-    if (payload.quantity <= 0) {
-        payload.quantity = 0
+    if (payload.quantity <= 1) {
+        payload.quantity = 1
     }
 })
 

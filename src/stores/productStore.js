@@ -24,6 +24,7 @@ export const useProductStore = defineStore('products',{
             } catch (error) {
                 throw error
             }
-        }
+        },
+        
     }
 })

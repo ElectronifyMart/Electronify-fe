@@ -8,7 +8,7 @@
         <h2 class="card-title">{{ product.name }}</h2>
         <h3>Price: Rp. {{ product.price }}</h3>
         <p>Stock: {{ product.stock }}</p>
-        <p>{{ product.description }}</p>
+        <p>{{ product.description ?? 'Description not available' }}</p>
         <div class="card-actions justify-end">
           <button class="btn btn-primary">Buy Now</button>
         </div>

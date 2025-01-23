@@ -26,7 +26,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { usePaymentStore } from '@/stores/paymentStore';
+import { onMounted, ref } from 'vue';
 const headers = [
   { text: "ORDER ID", value: "order_id" },
   { text: "QUANTITY", value: "quantity"},
@@ -39,8 +40,25 @@ const items = [
 
 ];
 
+const paymentStore = usePaymentStore()
+
 const searchField = ref("player");
 const searchValue = ref("Stephen Curry");
+
+const getProduct = async ()=>{
+    try {
+        const response = await paymentStore.orderList()
+        console.log(response);
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+onMounted(async ()=>{
+    await getProduct()
+})
 </script>
 
 <style scoped>

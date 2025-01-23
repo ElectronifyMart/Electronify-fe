@@ -159,7 +159,7 @@ const createProduct = async () => {
 
         console.log(response);
 
-        emits('getInfo', { status: 'success', message: response.message })
+        emits('getInfo', { status: 'success', message: response.messsage })
 
     } catch (error) {
         console.log(error);
