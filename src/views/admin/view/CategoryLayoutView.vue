@@ -1,13 +1,16 @@
 <template>
-    <CategoriModal :is-open="isOpen" @close="closeModalCategori"></CategoriModal>
+    <CategoriModal :category="items" :is-open="isOpen" @close="closeModalCategori" @refresh="getCategori" :is-edit="isEdit">
+    </CategoriModal>
+
     <header>
         <div class="w-full flex justify-between items-center py-4">
             <h1 class="text-2xl font-semibold">List Category</h1>
             <button class="btn btn-primary" type="button" @click="openModalCategori">
-                Add category
+                Add category 
             </button>
         </div>
     </header>
+
     <main class="flex flex-col gap-y-4 w-full">
         <div class="relative">
             <label for="search" class="absolute top-3 left-2">
@@ -16,11 +19,13 @@
             <input id="search" type="text" placeholder="Type here" class="input input-bordered w-full max-w-xs pl-8" />
         </div>
         <div v-if="categories.length > 0" class="w-full">
-            <EasyDataTable :headers="headers" :items="categories"
-                table-class-name="customize-table" alternating>
-                <template #item-action>
-                    <button class="btn btn-outline btn-info btn-sm">
-                        <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+            <EasyDataTable :headers="headers" :items="categories" table-class-name="customize-table" alternating>
+                <template #item-action="item">
+                    <button class="btn btn-outline btn-info btn-sm" @click="handleEdit(item)">
+                        <font-awesome-icon icon="fa-solid fa-pen-to-square" /> Edit
+                    </button>
+                    <button class="btn btn-outline btn-error btn-sm" @click="deleteCategory(item.id)">
+                        <font-awesome-icon icon="fa-solid fa-trash" /> Delete
                     </button>
                 </template>
             </EasyDataTable>
@@ -29,44 +34,67 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed} from 'vue';
+import { onMounted, ref } from 'vue';
 import CategoriModal from "@/components/modal/CategoriModal.vue";
 import { apiClient } from '@/services/apiClient';
+
+
 const headers = [
     { text: "NAME", value: "name" },
     { text: "ACTION", value: "action" },
 ];
 
-const categories = ref ({
-    
-})
+const categories = ref([]);
+const selectedCategory = ref(null);
+const isOpen = ref(false);  
+const isEdit = ref(false);
+const items = ref();
 
-const searchField = ref("name");
-const searchValue = ref("");
-const isOpen = ref(false);
-const openModalCategori = ()=>{ 
-    isOpen.value = !isOpen.value;
-}
-const closeModalCategori = (data)=>{
+const openModalCategori = (category = null) => {
+    selectedCategory.value = category;
+    isOpen.value = true;
+};
+
+const closeModalCategori = (data) => {
     isOpen.value = data;
-}
+    isEdit.value = false;
+};
 
 const getCategori = async () => {
     try {
-        const respons = await apiClient.get('category') 
-        categories.value = respons.data.data.map(item => ({
+        const response = await apiClient.get('/category');
+        categories.value = response.data.data.map(item => ({
+            id: item.id,
             name: item.name,
-        }));    
-        console.log(categories.value);
+        }));
     } catch (error) {
-        console.log(error)
+        console.error(error);
     }
-}
+};
 
+const handleEdit = (item) => {
+    openModalCategori();
+    isEdit.value = true;
+    items.value = item;
+    console.log(item);
+};
 
-onMounted (async() => {
-    await getCategori() 
-}) 
+const deleteCategory = async (id) => {
+    if (confirm('Are you sure you want to delete this category?')) {
+        try {
+            await apiClient.delete(`/category/${id}`);
+            categories.value = categories.value.filter(category => category.id !== id);
+            alert('Category deleted successfully!');
+        } catch (error) {
+            console.error(error);
+            alert('Failed to delete category.');
+        }
+    }
+};
+
+onMounted(() => {
+    getCategori();
+});
 </script>
 
 <style scoped>

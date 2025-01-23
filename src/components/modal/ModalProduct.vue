@@ -42,8 +42,7 @@
                         <label for="category">Category</label>
                         <select id="category" v-model="payload.category" class="select select-bordered w-full">
                             <option disabled selected>Select category</option>
-                            <option>Han Solo</option>
-                            <option>Greedo</option>
+                            <option :value="category.id" v-for="category in data">{{ category.name }}</option>
                         </select>
                         <p class="text-[11px]  border text-red-500 font-bold placeholder-white/70"
                             v-for="error, index of v$.category.$errors" :key="index">
@@ -52,10 +51,14 @@
                     </div>
                     <div class="flex flex-col">
                         <label for="desc">Description</label>
-                        <textarea v-model="payload.description" id="desc" class="textarea textarea-bordered" placeholder="Bio"></textarea>
+                        <textarea v-model="payload.description" id="desc" class="textarea textarea-bordered"
+                            placeholder="Bio"></textarea>
                     </div>
                     <div class="flex justify-end py-4">
-                        <button class="btn btn-success text-white btn-wide" type="submit">Submit</button>
+                        <button class="btn btn-success text-white btn-wide" type="submit">
+                            <span v-if="!isLoading">Submit</span>
+                            <span v-else class="loading loading-spinner loading-lg"></span>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -64,9 +67,14 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, shallowReactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import { useProductStore } from '@/stores/productStore';
+import { useCategoryStore } from '@/stores/categoryStore';
+
+const productStore = useProductStore()
+const categoryStore = useCategoryStore()
 
 
 const payload = reactive({
@@ -94,14 +102,20 @@ const emits = defineEmits(['close'])
 const src = ref('')
 const file = ref('')
 
+const isLoading = ref(false)
+
 
 const uploadProductImage = (e) => {
     const file = e.target.files
     src.value = URL.createObjectURL(new Blob(file))
 }
 
+const initialPayload = shallowReactive({ ...payload })
+
 const closeModal = () => {
-    emits('close', !props.isOpen)
+    emits('close', false)
+
+    return Object.assign(payload,initialPayload)
 }
 
 const removeImage = () => {
@@ -109,14 +123,48 @@ const removeImage = () => {
     src.value = ''
 }
 
+const categories = ref([])
+
+const data = computed(() => categories.value)
+
+const getCategory = async () => {
+    try {
+        const res = await categoryStore.getCategories()
+        categories.value = res.data
+        console.log(categories.value);
+
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
 const createProduct = async () => {
     v$.value.$touch()
     if (v$.value.$invalid) return
+    isLoading.value = !isLoading.value
+
+    try {
+        const response = await productStore.createProduct(payload)
+
+        console.log(response);
+
+    } catch (error) {
+        console.log(error);
+
+    } finally {
+        isLoading.value = !isLoading.value
+        closeModal()
+    }
 }
+
+onMounted(async () => {
+    await getCategory()
+})
 </script>
 
 <style scoped>
-
 .modal-product-enter-active,
 .modal-product-leave-active {
     transition: opacity 0.5s ease;

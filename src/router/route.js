@@ -2,15 +2,16 @@ import AdminLayoutView from "@/views/admin/AdminLayoutView.vue";
 import CategoryLayoutView from "@/views/admin/view/CategoryLayoutView.vue";
 import OrderLayoutView from "@/views/admin/view/OrderLayoutView.vue";
 import ProductLayoutView from "@/views/admin/view/ProductLayoutView.vue";
+import RoleLayoutView from "@/views/admin/view/RoleLayoutView.vue";
 import WelcomeAdminView from "@/views/admin/view/WelcomeAdminView.vue";
 import LoginView from "@/views/LoginView.vue";
 import ProductView from "@/views/ProductView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import VerificationView from "@/views/VerificationView.vue";
-import AfterView from "@/views/AfterView.vue";
 
 import UserLayoutView from "@/views/user/UserLayoutView.vue";
 
+import DetailProductView from "@/views/user/DetailProductView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
@@ -18,7 +19,8 @@ const routes = [
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
   { path: "/verification", component: VerificationView },
-  { path: "/after", component: AfterView },
+  // { path: "/after", component: AfterView },
+  { path: "/detail", component: DetailProductView },
 
   {
     path: "/admin",
@@ -47,6 +49,7 @@ const routes = [
       {
         path: "role",
         name: "role",
+        component: RoleLayoutView,
       },
     ],
   },
