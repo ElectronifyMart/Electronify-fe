@@ -79,6 +79,7 @@
               >
               <span v-else class="loading loading-infinity loading-lg"></span>
             </button>
+            🌤 
           </div>
         </form>
       </div>
