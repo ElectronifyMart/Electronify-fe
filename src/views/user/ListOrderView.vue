@@ -79,7 +79,8 @@ const snapOpen = (id) => {
     
     return window.snap.pay(id, {
         onSuccess: async function (result) {
-            const server_key = sha512(
+            try{
+                const server_key = sha512(
                 result.order_id + result.status_code + result.gross_amount + SERVER_KEY_MIDTRANS)
                 console.log(server_key);
                 const response = await apiClient.post('midtrans/webhook', {
@@ -94,6 +95,12 @@ const snapOpen = (id) => {
                     }
                 })
                 console.log(response);
+            }catch(error){
+                console.log(error);
+                
+            }finally{
+                await getOrderList()
+            }
                 
         },
         onPending: async function (result) {
@@ -118,24 +125,33 @@ const snapOpen = (id) => {
             } catch (error) {
                 console.log(error);
                 
+            }finally{
+                await getOrderList()
             }
         },
         onError: async function (result) {
-            const server_key = sha512(
-                result.order_id + result.status_code + result.gross_amount + SERVER_KEY_MIDTRANS)
-                console.log(server_key);
-                const response = await apiClient.post('midtrans/webhook', {
-                    order_id: result.order_id,
-                    status_code: result.status_code,
-                    gross_amount: result.gross_amount,
-                    signature_key : server_key,
-                    transaction_status : result.transaction_status
-                },{
-                    headers : {
-                        Authorization : `Bearer ${userToken.value}`
-                    }
-                })
-                console.log(response);
+            try {
+                const server_key = sha512(
+                    result.order_id + result.status_code + result.gross_amount + SERVER_KEY_MIDTRANS)
+                    console.log(server_key);
+                    const response = await apiClient.post('midtrans/webhook', {
+                        order_id: result.order_id,
+                        status_code: result.status_code,
+                        gross_amount: result.gross_amount,
+                        signature_key : server_key,
+                        transaction_status : result.transaction_status
+                    },{
+                        headers : {
+                            Authorization : `Bearer ${userToken.value}`
+                        }
+                    })
+                    console.log(response);    
+            } catch (error) {
+                console.log(error);
+                
+            }finally{
+                await getOrderList()
+            }
         },
         onClose: async function () {
             console.log('customer closed the popup without finishing the payment')
