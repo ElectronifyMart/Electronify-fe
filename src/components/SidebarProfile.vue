@@ -58,25 +58,26 @@
 </template>
 
 <script setup>
-import { apiClient } from "@/services/apiClient";
 import { useAuthStore } from "@/stores/authStorage";
 import { reactive } from "vue";
 
 const profile = reactive({
   bio: "",
-  age: null,
+  age: 0,
   image: null,
 });
 
 const store = useAuthStore();
 
-console.log(store.tokenUser);
+// console.log(store.tokenUser);
 // const src = reactive("");
 // const image = ref(null);
 const uploadProfileImage = (e) => {
-  image.value = e.target.files[0];
+  // image.value = e.target.files[0];
+  profile.image = e.target.files[0];
 };
 
+console.log(uploadProfileImage);
 const handleProfile = async () => {
   try {
     const formData = new FormData();
@@ -86,15 +87,7 @@ const handleProfile = async () => {
       formData.append("image", profile.image);
     }
 
-    console.log(typeof profile.age);
-
-    const response = await apiClient.post("/profile", formData, {
-      headers: {
-        Authorization: `Bearer ${store.tokenUser}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
+    const response = await store.profileUser(formData);
     console.log("Profile updated:", response);
   } catch (error) {
     console.error("Error updating profile:", error);

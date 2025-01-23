@@ -4,7 +4,9 @@
   <section class="fixed w-full top-0 left-0 z-10">
     <div class="navbar bg-base-100 glass">
       <div class="navbar-start">
-        <a class="btn btn-ghost text-xl max-sm:hidden">daisyUI</a>
+        <a class="btn btn-ghost text-xl max-sm:hidden"
+          ><router-link to="/">Electronify</router-link></a
+        >
 
         <div class="dropdown max-sm:block hidden">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
@@ -30,6 +32,7 @@
           >
             <div v-if="store.currentUser">
               <li><button @click="showSidebar">Profile</button></li>
+              <li><button @click="handleLogout">Logout</button></li>
             </div>
             <div v-else>
               <li>
@@ -83,7 +86,7 @@
             <div class="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                :src="test ?? defaultImage"
               />
             </div>
           </div>
@@ -117,6 +120,7 @@
   </section>
 </template>
 <script setup>
+import router from "@/router/route";
 import { useAuthStore } from "@/stores/authStorage";
 import { useProductStore } from "@/stores/productStore";
 import { computed } from "vue";
@@ -124,14 +128,27 @@ import { computed } from "vue";
 const store = useAuthStore();
 const emit = defineEmits(["sidebar"]);
 const productStore = useProductStore();
-
+const defaultImage =
+  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
+const profilePicture = computed(() => {
+  return JSON.parse(localStorage.getItem("profile"));
+});
+const test = profilePicture.value.image;
 const searchQuery = computed({
   get: () => productStore.searchQuery,
   set: (value) => productStore.updateSearchQuery(value),
 });
 
 const showSidebar = () => {
-  emit("sidebar", true);
+  if (store.tokenUser == null) {
+    alert("Belum Login");
+    router.replace("/");
+  } else if (store.currentUser.email_verified_at == null) {
+    alert("Belum Verifikasi");
+    router.replace("/verification");
+  } else {
+    emit("sidebar", true);
+  }
 };
 
 const handleLogout = async () => {

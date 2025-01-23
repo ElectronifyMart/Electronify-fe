@@ -11,20 +11,26 @@ import VerificationView from "@/views/VerificationView.vue";
 
 import UserLayoutView from "@/views/user/UserLayoutView.vue";
 
+import { useAuthStore } from "@/stores/authStorage";
 import DetailProductView from "@/views/user/DetailProductView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import ListOrderView from "@/views/user/ListOrderView.vue";
 
 const routes = [
   { path: "/", component: UserLayoutView },
-  { path: "/login", component: LoginView },
-  { path: "/register", component: RegisterView },
-  { path: "/verification", component: VerificationView },
+  { path: "/login", component: LoginView, meta: { isLogin: true } },
+  { path: "/register", component: RegisterView, meta: { isLogin: true } },
+  {
+    path: "/verification",
+    component: VerificationView,
+    meta: { isAuthTrue: true, isAuth: true },
+  },
   { path: "/detail/:id", component: DetailProductView, name: "DetailProduct" },
 
   {
     path: "/admin",
     component: AdminLayoutView,
+    meta: { isAdmin: true },
     children: [
       {
         path: "",
@@ -60,6 +66,41 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to) => {
+  const store = await useAuthStore();
+  if (
+    to.meta.isAdmin &&
+    store.currentUser.role_id == "46860524-0c29-4c96-ae51-cbef7cb1d6bb"
+  ) {
+    alert("Access Blocks for Users");
+    return {
+      path: "/",
+    };
+  }
+  if (to.meta.isAuth && !store.tokenUser) {
+    alert("Login to Access Content");
+    return {
+      path: "/login",
+    };
+  }
+  if (
+    to.meta.isAuthTrue &&
+    store.tokenUser &&
+    store.currentUser.email_verified_at != null
+  ) {
+    alert("Sudah Verifikasi");
+    return {
+      path: "/",
+    };
+  }
+  if (to.meta.isLogin && store.tokenUser) {
+    alert("Sudah Login");
+    return {
+      path: "/",
+    };
+  }
 });
 
 export default router;
