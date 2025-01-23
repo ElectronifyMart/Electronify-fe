@@ -27,6 +27,7 @@ import SidebarProfile from "@/components/SidebarProfile.vue";
 import SliderUser from "@/components/SliderUser.vue";
 import MainLayoutView from "@/layouts/MainLayoutView.vue";
 import { ref } from "vue";
+
 const isProfile = ref(false);
 const showSidebar = (data) => {
   isProfile.value = data;

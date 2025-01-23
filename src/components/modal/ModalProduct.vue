@@ -9,7 +9,7 @@
                         <font-awesome-icon icon="fa-solid fa-rectangle-xmark" size="xl" />
                     </button>
                 </div>
-                <form @submit.prevent="createProduct" class="flex flex-col flex-grow min-h-0 gap-y-4 p-4">
+                <form @submit.prevent="createProduct" class="flex flex-col flex-grow min-h-0 gap-y-4 p-4" enctype="multipart/form-data">
                     <div class="flex flex-col">
                         <label for="name">Name</label>
                         <input v-model="payload.name" id="name" type="text" placeholder="Type here"
@@ -97,7 +97,7 @@ const props = defineProps({
         default: false
     }
 })
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close', 'getInfo'])
 
 const src = ref('')
 const file = ref('')
@@ -108,6 +108,7 @@ const isLoading = ref(false)
 const uploadProductImage = (e) => {
     const file = e.target.files
     src.value = URL.createObjectURL(new Blob(file))
+    payload.image = file[0]
 }
 
 const initialPayload = shallowReactive({ ...payload })
@@ -115,7 +116,7 @@ const initialPayload = shallowReactive({ ...payload })
 const closeModal = () => {
     emits('close', false)
 
-    return Object.assign(payload,initialPayload)
+    return Object.assign(payload, initialPayload)
 }
 
 const removeImage = () => {
@@ -145,14 +146,24 @@ const createProduct = async () => {
     if (v$.value.$invalid) return
     isLoading.value = !isLoading.value
 
+
     try {
-        const response = await productStore.createProduct(payload)
+        const formData = new FormData()
+        formData.append('name', payload.name)
+        formData.append('image', payload.image)
+        formData.append('price', payload.price)
+        formData.append('stock', payload.stock)
+        formData.append('category_id', payload.category)
+        formData.append('description', payload.description)
+        const response = await productStore.createProduct(formData)
 
         console.log(response);
 
+        emits('getInfo', { status: 'success', message: response.message })
+
     } catch (error) {
         console.log(error);
-
+        emits('getInfo', { status: 'error', message: error })
     } finally {
         isLoading.value = !isLoading.value
         closeModal()

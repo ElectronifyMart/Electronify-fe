@@ -23,12 +23,26 @@
               />
             </svg>
           </div>
+
           <ul
             tabindex="0"
             class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
-            <li><a>Cart</a></li>
-            <li><button @click="showSidebar">Profile</button></li>
+            <div v-if="store.currentUser">
+              <li><button @click="showSidebar">Profile</button></li>
+            </div>
+            <div v-else>
+              <li>
+                <router-link :to="{ path: '/login' }">
+                  <button class="btn btn-outline btn-sm">Login</button>
+                </router-link>
+              </li>
+              <li>
+                <router-link :to="{ path: '/register' }">
+                  <button class="btn btn-outline btn-sm">Register</button>
+                </router-link>
+              </li>
+            </div>
           </ul>
         </div>
       </div>
@@ -50,89 +64,53 @@
               clip-rule="evenodd"
             />
           </svg>
-          <input type="text" class="grow" placeholder="Search" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="grow"
+            placeholder="Search"
+          />
         </label>
       </div>
 
       <div class="navbar-end">
-        <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-            <div class="indicator">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              <span class="badge badge-sm indicator-item">8</span>
+        <div class="dropdown dropdown-end" v-if="store.currentUser">
+          <div
+            tabindex="0"
+            role="button"
+            class="btn btn-ghost btn-circle avatar max-md:hidden"
+          >
+            <div class="w-10 rounded-full">
+              <img
+                alt="Tailwind CSS Navbar component"
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              />
             </div>
           </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+          >
+            <li>
+              <button class="justify-between" @click="showSidebar">
+                Profile
+                <span class="badge">New</span>
+              </button>
+            </li>
+            <li><button @click="handleLogout">Logout</button></li>
+          </ul>
+        </div>
 
-          <!-- Cart Session -->
-          <!-- Cart and Profile Dropdown -->
-          <div class="dropdown dropdown-end">
-            <!-- Cart Dropdown -->
-            <div
-              tabindex="0"
-              class="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow"
-              v-if="store.currentUser"
-            >
-              <div class="card-body">
-                <span class="text-lg font-bold">8 Items</span>
-                <span class="text-info">Subtotal: $999</span>
-                <div class="card-actions">
-                  <button class="btn btn-primary btn-block">View cart</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Profile Dropdown -->
-            <div class="dropdown dropdown-end" v-if="store.currentUser">
-              <div
-                tabindex="0"
-                role="button"
-                class="btn btn-ghost btn-circle avatar"
-              >
-                <div class="w-10 rounded-full">
-                  <img
-                    alt="Tailwind CSS Navbar component"
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                  />
-                </div>
-              </div>
-              <ul
-                tabindex="0"
-                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-              >
-                <li>
-                  <button class="justify-between" @click="showSidebar">
-                    Profile
-                    <span class="badge">New</span>
-                  </button>
-                </li>
-                <li><a>Settings</a></li>
-                <li><button @click="handleLogout">Logout</button></li>
-              </ul>
-            </div>
-
-            <!-- Login and Register Buttons -->
-            <div v-else class="flex items-center gap-x-2">
-              <router-link :to="{ path: '/login' }">
-                <button class="btn btn-outline btn-sm">Login</button>
-              </router-link>
-              <router-link :to="{ path: '/register' }">
-                <button class="btn btn-primary btn-sm">Register</button>
-              </router-link>
-            </div>
-          </div>
+        <!-- Login and Register Buttons -->
+        <div v-else class="flex items-center gap-x-2">
+          <router-link :to="{ path: '/login' }">
+            <button class="btn btn-outline btn-sm max-md:hidden">Login</button>
+          </router-link>
+          <router-link :to="{ path: '/register' }">
+            <button class="btn btn-primary btn-sm max-md:hidden">
+              Register
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -140,9 +118,17 @@
 </template>
 <script setup>
 import { useAuthStore } from "@/stores/authStorage";
+import { useProductStore } from "@/stores/productStore";
+import { computed } from "vue";
 
 const store = useAuthStore();
 const emit = defineEmits(["sidebar"]);
+const productStore = useProductStore();
+
+const searchQuery = computed({
+  get: () => productStore.searchQuery,
+  set: (value) => productStore.updateSearchQuery(value),
+});
 
 const showSidebar = () => {
   emit("sidebar", true);
@@ -151,7 +137,7 @@ const showSidebar = () => {
 const handleLogout = async () => {
   try {
     const response = await store.LogoutUser();
-    console.log(response.data.message);
+    // console.log(response.data.message);
   } catch (error) {
     throw error;
   }

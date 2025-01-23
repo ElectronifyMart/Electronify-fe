@@ -48,11 +48,28 @@ const store = useAuthStore();
 const otpCode = ref("");
 const verification = async () => {
   try {
-    await store.verifikasiAccount(otpCode.value);
-    showToast("success", "Successfull", "Account successfully activated");
+    const response = await store.verifikasiAccount(otpCode.value);
+    showToast("success", "Successful", "Account successfully activated");
+
+    if (response && response.message) {
+      const message = response.message;
+
+      if (response.success) {
+        showToast("success", "Successful", message);
+      } else {
+        showToast("error", "Error", message);
+      }
+    } else {
+      showToast("error", "Error", "Token is invalid");
+    }
   } catch (error) {
-    showToast("error", "Successfull", "OTP Code Invalid or Expired");
-    throw error;
+    if (error.response && error.response.message) {
+      showToast("error", "Error", error.response.message);
+    } else {
+      showToast("error", "Error", "Token is invalid");
+    }
+
+    console.error(error);
   }
 };
 

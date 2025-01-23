@@ -66,18 +66,22 @@ const showToast = (severity, summary, detail) => {
     severity: severity,
     summary: summary,
     detail: detail,
-    life: 3000,
+    life: 19000,
   });
 };
 
-const handleLogin = async () => {
+const handleLogin = () => {
   try {
-    const response = await authStorage.LoginUser(user);
-    showToast("success", "Successfull", `Login successful`);
+    const response = authStorage.LoginUser(user);
+    console.log(response);
+    if (response) {
+      console.log("Show Toast Success");
+      showToast("success", "Successfull", `Login successful`);
+    }
     authStorage.generateOtpCode(authStorage.currentUser.email);
   } catch (error) {
-    console.log(error);
     showToast("error", "Login Failed", "Invalid Email or Password");
+    console.log(error);
   }
 };
 </script>

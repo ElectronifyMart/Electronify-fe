@@ -1,5 +1,5 @@
 <template>
-    <ModalProduct :is-open="isOpen" @close="closeModal"/>
+    <ModalProduct :is-open="isOpen" @close="closeModal" @getInfo="getInfoResponse"/>
     <header class="mb-5">
         <div class="w-full flex justify-between items-center py-4">
             <h1 class="text-2xl font-semibold">List Product</h1>
@@ -13,7 +13,8 @@
                 <label for="search" class="absolute top-3 left-2">
                     <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
                 </label>
-                <input type="text" id="search" class="w-full h-12 focus:outline-none border rounded-md pl-8" placeholder="Type here...">
+                <input type="text" id="search" class="w-full h-12 focus:outline-none border rounded-md pl-8"
+                    placeholder="Type here...">
             </div>
         </div>
 
@@ -28,14 +29,36 @@
         </div>
     </header>
     <main class="flex flex-wrap gap-4 justify-center">
-        <div class="card card-compact bg-base-100 w-80 shadow-xl relative max-md:w-72" v-for="num in 10">
+        <div role="alert" class="alert alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Your purchase has been confirmed!</span>
+        </div>
+        <div class="flex-wrap justify-center flex gap-4" v-if="products.length === 0">
+            <div class="flex w-80 max-md:w-72 flex-col gap-4" v-for="skel in 3">
+                <div class="skeleton h-48 w-full"></div>
+                <div class="skeleton h-4 w-28"></div>
+                <div class="skeleton h-4 w-full"></div>
+                <div class="skeleton h-4 w-full"></div>
+            </div>
+        </div>
+
+        <div class="card card-compact bg-base-100 w-80 shadow-xl relative max-md:w-72 overflow-hidden"
+            v-for="product in products" v-else>
+            <div class="w-full h-44 bg-slate-100 flex justify-center items-center text-black/20">
+                <h1 class="text-xl font-semibold uppercase">Electronify</h1>
+            </div>
             <figure>
-                <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
+                <img :src="product.image" />
             </figure>
             <div class="card-body">
-                <h2 class="card-title">Shoes!</h2>
-                <p>If a dog chews shoes whose shoes does he choose?</p>
-                <p>Price Rp 1.000.000</p>
+                <h2 class="card-title text-xl tracking-tight">{{ product.name }}</h2>
+                <p>{{ formatterRupiah.formatPriceToIDR(product.price) }}</p>
+                <p>{{ product.description ?? 'Description not available' }}</p>
+                <p>Stock : {{ product.stock }}</p>
                 <div class="card-actions justify-end">
                     <button class="btn btn-accent btn-md text-white btn-outline">Edit</button>
                 </div>
@@ -44,20 +67,54 @@
                 <font-awesome-icon icon="fa-solid fa-rectangle-xmark" size="xl" />
             </button>
         </div>
+
     </main>
 </template>
 
 <script setup>
 import ModalProduct from '@/components/modal/ModalProduct.vue';
-import { ref } from 'vue';
+import { useProductStore } from '@/stores/productStore';
+import { onMounted, reactive, ref } from 'vue';
+import formatterRupiah from '@/services/formatterRupiah';
+
+const productStore = useProductStore()
 
 const isOpen = ref(false)
 
-const openModalProduct = ()=>{
+const openModalProduct = () => {
     isOpen.value = !isOpen.value
 }
 
-const closeModal = (data)=>{
+const closeModal = (data) => {
     isOpen.value = data
 }
+
+const products = ref([])
+
+const getProducts = async () => {
+    try {
+        const response = await productStore.getProducts()
+        products.value = response.data
+        console.log(response.data);
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const info = reactive({
+    status : '',
+    data : ''
+})
+
+const getInfoResponse = ({status,message})=>{
+    info.status = status
+    console.log(message);
+    
+}
+
+onMounted(async () => {
+    await getProducts()
+})
 </script>

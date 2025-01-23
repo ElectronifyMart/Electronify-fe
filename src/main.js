@@ -1,5 +1,7 @@
 import "./assets/tailwind.css";
 
+import Nora from "@primevue/themes/nora";
+import "primeicons/primeicons.css";
 import PrimeVue from "primevue/config";
 import ToastService from "primevue/toastservice";
 import { createApp } from "vue";
@@ -17,7 +19,11 @@ import "vue3-easy-data-table/dist/style.css";
 library.add(fas, far);
 const app = createApp(App);
 const pinia = createPinia();
-app.use(PrimeVue);
+app.use(PrimeVue, {
+  theme: {
+    preset: Nora,
+  },
+});
 app.use(ToastService);
 
 app.use(router);
