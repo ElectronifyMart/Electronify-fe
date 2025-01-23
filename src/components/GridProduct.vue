@@ -1,18 +1,38 @@
 <template>
-  <OrderModal :is-open="isOpen" :product="detailsProduct" @close="closeModalOrder" @order="createOrder" />
+  <OrderModal
+    :is-open="isOpen"
+    :product="detailsProduct"
+    @close="closeModalOrder"
+    @order="createOrder"
+  />
   <section>
-    <h1 class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left">
+    <h1
+      class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left"
+    >
       Product
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 px-10 py-3">
-      <div v-if="!isLoading" class="w-58" v-for="item in products" :key="item.id">
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 px-10 py-3"
+    >
+      <div
+        v-if="!isLoading"
+        class="w-58"
+        v-for="item in products"
+        :key="item.id"
+      >
         <div class="card overflow-hidden rounded-md">
           <div class="h-44 w-full border">
-            <img :src="item.image ?? imgList2" alt="Shoes" class="h-full w-full object-cover" />
+            <img
+              :src="item.image ?? imgList2"
+              alt="Shoes"
+              class="h-full w-full object-cover"
+            />
           </div>
           <div class="card-body">
-            <h2 class="card-title overflow-hidden text-ellipsis whitespace-nowrap">
+            <h2
+              class="card-title overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ item.name }}
             </h2>
             <p class="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -23,10 +43,18 @@
               <h2>{{ formatterRupiah.formatPriceToIDR(item.price) }}</h2>
 
               <div>
-                <button class="btn btn-success m-1" type="button" @click="order(item)">
+                <button
+                  class="btn btn-success m-1"
+                  type="button"
+                  @click="order(item)"
+                >
                   Buy Now
                 </button>
-                <button class="btn btn-neutral" type="button" @click="detailProduct(item.id)">
+                <button
+                  class="btn btn-neutral"
+                  type="button"
+                  @click="detailProduct(item.id)"
+                >
                   Detail
                 </button>
 
@@ -45,7 +73,6 @@
         <div class="skeleton h-4 w-full"></div>
         <div class="skeleton h-4 w-full"></div>
       </div>
-
     </div>
   </section>
 </template>
@@ -53,78 +80,80 @@
 import imgList2 from "@/assets/imgList2.png";
 import formatterRupiah from "@/services/formatterRupiah";
 import { usePaymentStore } from "@/stores/paymentStore";
-import { onMounted, ref } from "vue";
-import OrderModal from "./modal/OrderModal.vue";
-import { useRouter } from "vue-router";
 import { useProductStore } from "@/stores/productStore";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import OrderModal from "./modal/OrderModal.vue";
 const router = useRouter();
-const id = ref({
-  id: "",
-});
 
 const storePayment = usePaymentStore();
-const productStore = useProductStore()
+const productStore = useProductStore();
 
-const isLoading = ref(false)
-const detailsProduct = ref({})
-const isOpen = ref(false)
+const isLoading = ref(false);
+const detailsProduct = ref({});
+const isOpen = ref(false);
 
 const order = async (data) => {
-  detailsProduct.value = data
-  isOpen.value = !isOpen.value
-}
+  detailsProduct.value = data;
+  isOpen.value = !isOpen.value;
+};
 
 const createOrder = async (data) => {
-  data.address = "bandung"
-  data.email = "rahman@mail.com"
+  data.address = "bandung";
+  data.email = "rahman@mail.com";
   console.log(data);
   try {
-    const response = await storePayment.order(data)
+    const response = await storePayment.order(data);
     console.log(response);
     await window.snap.pay(response.data.token, {
-
-      onSuccess: function (result) { console.log('success'); console.log(result); },
-      onPending: function (result) { console.log('pending'); console.log(result); },
-      onError: function (result) { console.log('error'); console.log(result); },
+      onSuccess: function (result) {
+        console.log("success");
+        console.log(result);
+      },
+      onPending: function (result) {
+        console.log("pending");
+        console.log(result);
+      },
+      onError: function (result) {
+        console.log("error");
+        console.log(result);
+      },
       onClose: function () {
-        console.log('customer closed the popup without finishing the payment')
-      }
+        console.log("customer closed the popup without finishing the payment");
+      },
     });
   } catch (error) {
     console.log(error);
+  } finally {
+    isLoading.value = false;
   }
-}
+};
 
 const detailProduct = (id) => {
   router.push({ name: "DetailProduct", params: { id: id } });
-}
+};
 
-
-const products = ref([])
+const products = ref([]);
 
 const getProduct = async () => {
-  isLoading.value = !isLoading.value
+  isLoading.value = !isLoading.value;
   try {
-    const response = await productStore.getProducts()
-    products.value = response.data
+    const response = await productStore.getProducts();
+    products.value = response.data;
 
     console.log(response);
-
   } catch (error) {
     console.log(error);
-
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const closeModalOrder = (data) => {
-  isOpen.value = !data
-}
+  isOpen.value = !data;
+};
 
 onMounted(async () => {
-  await getProduct()
-})
-
-
+  await getProduct();
+});
 </script>

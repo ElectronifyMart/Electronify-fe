@@ -33,8 +33,9 @@ export const useAuthStore = defineStore("counter", () => {
       localStorage.setItem("user", JSON.stringify(currentUser.value));
 
       router.replace("/");
+      return data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   };
 
@@ -126,6 +127,7 @@ export const useAuthStore = defineStore("counter", () => {
   return {
     LoginUser,
     RegisterUser,
+    tokenUser,
     generateOtpCode,
     verifikasiAccount,
     currentUser,

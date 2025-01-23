@@ -1,5 +1,6 @@
 <template>
   <div class="hero bg-base-200 min-h-screen">
+    <Toast />
     <div class="hero-content flex-col lg:flex-row-reverse">
       <div class="text-center lg:text-left">
         <h1 class="text-5xl font-bold">Login now!</h1>
@@ -37,7 +38,7 @@
             </label>
           </div>
           <div class="form-control mt-6">
-            <button class="btn btn-primary">
+            <button class="btn btn-primary" severity="secondary">
               <font-awesome-icon icon="fa-solid fa-user" /> Login
             </button>
           </div>
@@ -49,23 +50,38 @@
 
 <script setup>
 import { useAuthStore } from "@/stores/authStorage";
+import { Toast, useToast } from "primevue";
 import { reactive } from "vue";
-import { useRouter } from "vue-router";
 
+const toast = useToast();
 const authStorage = useAuthStore();
-const router = useRouter();
+
 const user = reactive({
   email: "",
   password: "",
 });
 
-const handleLogin = async () => {
+const showToast = (severity, summary, detail) => {
+  toast.add({
+    severity: severity,
+    summary: summary,
+    detail: detail,
+    life: 19000,
+  });
+};
+
+const handleLogin = () => {
   try {
-    authStorage.LoginUser(user);
-    console.log(user);
+    const response = authStorage.LoginUser(user);
+    console.log(response);
+    if (response) {
+      console.log("Show Toast Success");
+      showToast("success", "Successfull", `Login successful`);
+    }
+    authStorage.generateOtpCode(authStorage.currentUser.email);
   } catch (error) {
+    showToast("error", "Login Failed", "Invalid Email or Password");
     console.log(error);
-    alert(error);
   }
 };
 </script>

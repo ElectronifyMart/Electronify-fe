@@ -1,6 +1,7 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="card bg-white shadow-lg p-6 rounded-lg max-w-sm w-full">
+      <Toast />
       <h1 class="text-2xl font-semibold text-center text-gray-800 mb-4">
         Verifikasi Akun
       </h1>
@@ -29,24 +30,55 @@
 
 <script setup>
 import { useAuthStore } from "@/stores/authStorage";
+import { Toast, useToast } from "primevue";
 import { ref } from "vue";
+
+const toast = useToast();
+
+const showToast = (severity, summary, detail) => {
+  toast.add({
+    severity: severity,
+    summary: summary,
+    detail: detail,
+    life: 3000,
+  });
+};
 
 const store = useAuthStore();
 const otpCode = ref("");
 const verification = async () => {
   try {
     const response = await store.verifikasiAccount(otpCode.value);
-    console.log(response, "berhasil");
+    showToast("success", "Successful", "Account successfully activated");
+
+    if (response && response.message) {
+      const message = response.message;
+
+      if (response.success) {
+        showToast("success", "Successful", message);
+      } else {
+        showToast("error", "Error", message);
+      }
+    } else {
+      showToast("error", "Error", "Token is invalid");
+    }
   } catch (error) {
-    throw error;
+    if (error.response && error.response.message) {
+      showToast("error", "Error", error.response.message);
+    } else {
+      showToast("error", "Error", "Token is invalid");
+    }
+
+    console.error(error);
   }
 };
 
 const generateOTP = async () => {
   try {
-    const response = store.generateOtpCode(store.currentUser.email);
-    console.log(response);
+    await store.generateOtpCode(store.currentUser.email);
+    showToast("success", "Successfull", "OTP sent successfully.");
   } catch (error) {
+    showToast("error", "Successfull", "Error Server");
     throw error;
   }
 };
