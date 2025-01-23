@@ -42,24 +42,20 @@
             <div class="card-actions justify-between">
               <h2>{{ formatterRupiah.formatPriceToIDR(item.price) }}</h2>
 
-              <div>
+              <div class="flex flex-row gap-1">
                 <button
-                  class="btn btn-success m-1"
+                  class="btn btn-success"
                   type="button"
                   @click="order(item)"
                 >
                   Buy Now
                 </button>
                 <button
-                  class="btn btn-neutral"
+                  class="btn btn-info"
                   type="button"
                   @click="detailProduct(item.id)"
                 >
                   Detail
-                </button>
-
-                <button class="btn btn-info w-full" type="button">
-                  Add to Cart
                 </button>
               </div>
             </div>
