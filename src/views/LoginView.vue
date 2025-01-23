@@ -41,6 +41,7 @@
             <button class="btn btn-primary" severity="secondary">
               <font-awesome-icon icon="fa-solid fa-user" /> Login
             </button>
+            🌤 
           </div>
         </form>
       </div>

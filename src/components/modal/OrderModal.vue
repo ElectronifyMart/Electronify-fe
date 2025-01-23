@@ -183,16 +183,17 @@ const close = (data = false) => {
 };
 
 const order = () => {
-  emits("order", {
-    first_name: payload.fname,
-    last_name: payload.ltname,
-    quantity: payload.quantity,
-    product_name: props.product.name,
-    product_id: props.product.id,
-    price: props.product.price,
-    total_price: payload.total_price,
-  });
-};
+    emits('order', {
+        'first_name': payload.fname,
+        'last_name': payload.ltname,
+        'quantity': payload.quantity,
+        'product_name': props.product.name,
+        'product_id': props.product.id,
+        'price': props.product.price || payload.price,
+        'total_price': payload.total_price,
+        'address': payload.address,
+    })
+}
 
 watch(
   () => props.product,
