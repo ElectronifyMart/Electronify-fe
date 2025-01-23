@@ -1,16 +1,68 @@
 <template>
-  <section class="flex justify-center items-center min-h-screen">
-    <div v-if="product" class="card lg:card-side bg-base-100 shadow-xl">
-      <figure>
-        <img :src="product.image" alt="Product Image" />
-      </figure>
-      <div class="card-body">
-        <h2 class="card-title">{{ product.name }}</h2>
-        <h3>Price: Rp. {{ product.price }}</h3>
-        <p>Stock: {{ product.stock }}</p>
-        <p>{{ product.description ?? 'Description not available' }}</p>
-        <div class="card-actions justify-end">
-          <button class="btn btn-primary">Buy Now</button>
+  <section>
+    <div class="bg-gray-100 dark:bg-white pt-20" v-if="product">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row -mx-4">
+          <div class="md:flex-1 px-4">
+            <div
+              class="h-[460px] bg-gray-300 dark:bg-gray-700 mb-4 overflow-hidden rounded-2xl"
+            >
+              <img
+                class="w-full h-full object-cover"
+                :src="product.image"
+                alt="Product Image"
+              />
+            </div>
+          </div>
+          <div class="md:flex-1 px-4">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-black mb-2">
+              {{ product.name }}
+            </h2>
+            <div class="flex mb-4">
+              <div class="mr-4">
+                <span class="font-bold text-gray-700 dark:text-black"
+                  >Price:
+                </span>
+                <span class="text-gray-600 dark:text-black">
+                  {{ formatToRupiah(product.price) }}</span
+                >
+              </div>
+              <div>
+                <span class="font-bold text-gray-700 dark:text-black"
+                  >Availability:
+                </span>
+                <span class="text-gray-600 dark:text-black">
+                  {{ product.stock }}</span
+                >
+              </div>
+            </div>
+
+            <div>
+              <span class="font-bold text-gray-700 dark:text-black"
+                >Product Description:</span
+              >
+              <p class="text-gray-600 dark:text-black text-sm mt-2">
+                {{ product.description }}
+              </p>
+            </div>
+
+            <div class="flex mt-3">
+              <div class="w-1/2 px-2">
+                <button
+                  class="w-full bg-info text-black py-2 px-4 rounded-full font-bold"
+                >
+                  Add to Cart
+                </button>
+              </div>
+              <div class="w-full px-2">
+                <button
+                  class="w-full bg-success text-black py-2 px-4 rounded-full font-bold"
+                >
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -32,6 +84,14 @@ const getProductDetail = async (id) => {
   } catch (error) {
     console.error("Error fetching product detail:", error);
   }
+};
+
+const formatToRupiah = (value) => {
+  if (typeof value !== "number") return value;
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(value);
 };
 
 onMounted(() => {
