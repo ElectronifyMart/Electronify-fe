@@ -1,5 +1,5 @@
 <template>
-  <OrderModal :is-open="isOpen" :product="detailsProduct" @close="closeModalOrder" />
+  <OrderModal :is-open="isOpen" :product="detailsProduct" @close="closeModalOrder" @order="createOrder" />
   <section>
     <h1 class="text-2xl text-left font-bold px-11 pt-10 xs:text-center sm:text-left md:text-left lg:text-left">
       Product
@@ -9,7 +9,7 @@
       <div v-if="!isLoading" class="w-58" v-for="item in products" :key="item.id">
         <div class="card overflow-hidden rounded-md">
           <div class="h-44 w-full border">
-            <img :src="item.image ?? imgList2" alt="Shoes" class="h-full w-full object-cover"/>
+            <img :src="item.image ?? imgList2" alt="Shoes" class="h-full w-full object-cover" />
           </div>
           <div class="card-body">
             <h2 class="card-title overflow-hidden text-ellipsis whitespace-nowrap">
@@ -45,7 +45,7 @@
         <div class="skeleton h-4 w-full"></div>
         <div class="skeleton h-4 w-full"></div>
       </div>
-      
+
     </div>
   </section>
 </template>
@@ -72,23 +72,26 @@ const isOpen = ref(false)
 const order = async (data) => {
   detailsProduct.value = data
   isOpen.value = !isOpen.value
+}
 
+const createOrder = async (data) => {
+  data.address = "bandung"
+  data.email = "rahman@mail.com"
+  console.log(data);
   try {
-    // const checkoutPayload = {
-    //   first_name : 'rahman',
-    //   last_name : 'hayadi',
-    //   address :'bandung',
-    //   email : 'rahman@mail.com',
-    //   quantity : 10,
-    //   product_name : data.title,
-    //   price : data.price
-    // };
-    // const response = await storePayment.order(checkoutPayload)
-    // console.log(response);
+    const response = await storePayment.order(data)
+    console.log(response);
+    await window.snap.pay(response.data.token, {
 
-    // await window.snap.pay(response.data.token);
-  } catch {
-
+      onSuccess: function (result) { console.log('success'); console.log(result); },
+      onPending: function (result) { console.log('pending'); console.log(result); },
+      onError: function (result) { console.log('error'); console.log(result); },
+      onClose: function () {
+        console.log('customer closed the popup without finishing the payment')
+      }
+    });
+  } catch (error) {
+    console.log(error);
   }
 }
 

@@ -29,13 +29,13 @@
         </div>
     </header>
     <main class="flex flex-wrap gap-4 justify-center">
-        <div role="alert" class="alert alert-success">
+        <div v-if="info.status" role="alert" class="alert" :class="info.status == 'success' ? 'alert-success' : 'alert-danger' ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Your purchase has been confirmed!</span>
+            <span>{{ info.message }}</span>
         </div>
         <div class="flex-wrap justify-center flex gap-4" v-if="products.length === 0">
             <div class="flex w-80 max-md:w-72 flex-col gap-4" v-for="skel in 3">
@@ -48,12 +48,12 @@
 
         <div class="card card-compact bg-base-100 w-80 shadow-xl relative max-md:w-72 overflow-hidden"
             v-for="product in products" v-else>
-            <div class="w-full h-44 bg-slate-100 flex justify-center items-center text-black/20">
+            <div v-if="!product.image" class="w-full h-44 bg-slate-100 flex justify-center items-center text-black/20">
                 <h1 class="text-xl font-semibold uppercase">Electronify</h1>
             </div>
-            <figure>
-                <img :src="product.image" />
-            </figure>
+            <div v-else class="w-full h-44 bg-slate-100 flex justify-center items-center text-black/20">
+                <img :src="product.image" class="w-full h-full object-cover"/>
+            </div>
             <div class="card-body">
                 <h2 class="card-title text-xl tracking-tight">{{ product.name }}</h2>
                 <p>{{ formatterRupiah.formatPriceToIDR(product.price) }}</p>
@@ -105,12 +105,15 @@ const getProducts = async () => {
 
 const info = reactive({
     status : '',
-    data : ''
+    message : ''
 })
 
+
+const alert = ref(false)
 const getInfoResponse = ({status,message})=>{
+    alert.value = !alert.value
     info.status = status
-    console.log(message);
+    info.message = message
     
 }
 

@@ -13,6 +13,14 @@ export const usePaymentStore = defineStore('payment',{
             } catch (error) {
                 throw error
             }
+        },
+        async orderList (){
+            try {
+                const response = await apiClient.get('order')
+                return response;
+            } catch (error) {
+                throw error
+            }
         }
     }
 })
