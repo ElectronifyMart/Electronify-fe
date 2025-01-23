@@ -53,6 +53,10 @@ import { onMounted, ref } from "vue";
 import OrderModal from "./modal/OrderModal.vue";
 import { useRouter } from "vue-router";
 import { useProductStore } from "@/stores/productStore";
+import { sha512 } from "js-sha512";
+import { useAuthStore } from "@/stores/authStorage";
+import { apiClient } from "@/services/apiClient";
+
 const router = useRouter();
 const id = ref({
   id: "",
@@ -70,19 +74,87 @@ const order = async (data) => {
   isOpen.value = !isOpen.value
 }
 
+const store = useAuthStore()
+const userToken = ref(localStorage.getItem('token') ? JSON.parse(localStorage.getItem("token"))  : null)
+
 const createOrder = async (data) => {
-  data.address = "bandung"
-  data.email = "rahman@mail.com"
+  data.email = store.currentUser.email
+ const SERVER_KEY_MIDTRANS = import.meta.env.VITE_MIDTRANS_SERVER_KEY
   console.log(data);
   try {
     const response = await storePayment.order(data)
     console.log(response);
     await window.snap.pay(response.data.snap_token, {
+      onSuccess: async function (result) {
+        try {
+          const server_key = sha512(
+            result.order_id + result.status_code + result.gross_amount + SERVER_KEY_MIDTRANS)
+          console.log(server_key);
+          const response = await apiClient.post('midtrans/webhook', {
+            order_id: result.order_id,
+            status_code: result.status_code,
+            gross_amount: result.gross_amount,
+            signature_key: server_key,
+            transaction_status: result.transaction_status
+          }, {
+            headers: {
+              Authorization: `Bearer ${userToken.value}`
+            }
+          })
+          console.log(response);
+        } catch (error) {
+          console.log(error);
 
-      onSuccess: function (result) { console.log('success'); console.log(result); },
-      onPending: function (result) { console.log('pending'); console.log(result); },
-      onError: function (result) { console.log('error'); console.log(result); },
-      onClose: function () {
+        }
+
+      },
+      onPending: async function (result) {
+        console.log(result);
+        try {
+          const server_key = sha512(
+            result.order_id + result.status_code + result.gross_amount + SERVER_KEY_MIDTRANS)
+          console.log(server_key);
+          const response = await apiClient.post('midtrans/webhook', {
+            order_id: result.order_id,
+            status_code: result.status_code,
+            gross_amount: result.gross_amount,
+            signature_key: server_key,
+            transaction_status: result.transaction_status
+          }, {
+            headers: {
+              Authorization: `Bearer ${userToken.value}`
+            }
+          })
+          console.log(response);
+
+        } catch (error) {
+          console.log(error);
+
+        }
+      },
+      onError: async function (result) {
+        try {
+          const server_key = sha512(
+            result.order_id + result.status_code + result.gross_amount + SERVER_KEY_MIDTRANS)
+          console.log(server_key);
+          const response = await apiClient.post('midtrans/webhook', {
+            order_id: result.order_id,
+            status_code: result.status_code,
+            gross_amount: result.gross_amount,
+            signature_key: server_key,
+            transaction_status: result.transaction_status
+          }, {
+            headers: {
+              Authorization: `Bearer ${userToken.value}`
+            }
+          })
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+
+        }
+      },
+      onClose: async function () {
         console.log('customer closed the popup without finishing the payment')
       }
     });

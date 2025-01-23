@@ -141,7 +141,8 @@ const order = () => {
         'product_name': props.product.name,
         'product_id': props.product.id,
         'price': props.product.price || payload.price,
-        'total_price': payload.total_price
+        'total_price': payload.total_price,
+        'address': payload.address,
     })
 }
 
