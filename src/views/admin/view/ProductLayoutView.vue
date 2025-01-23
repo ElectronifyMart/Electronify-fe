@@ -1,8 +1,10 @@
 <template>
   <ModalProduct
     :is-open="isOpen"
+    :is-submit="isSubmit"
     @close="closeModal"
     @getInfo="getInfoResponse"
+    :item="items"
   />
   <header class="mb-5">
     <div class="w-full flex justify-between items-center py-4">
@@ -93,7 +95,10 @@
         <p>{{ product.description ?? "Description not available" }}</p>
         <p>Stock : {{ product.stock }}</p>
         <div class="card-actions justify-end">
-          <button class="btn btn-accent btn-md text-white btn-outline">
+          <button
+            class="btn btn-accent btn-md text-white btn-outline"
+            @click="editModalProduct(product)"
+          >
             Edit
           </button>
         </div>
@@ -115,10 +120,20 @@ import { onMounted, reactive, ref } from "vue";
 
 const productStore = useProductStore();
 
+const isSubmit = ref(false);
+const items = ref();
 const isOpen = ref(false);
+
+const editModalProduct = (item) => {
+  items.value = item;
+  isOpen.value = !isOpen.value;
+  isSubmit.value = false;
+  console.log(items.value);
+};
 
 const openModalProduct = () => {
   isOpen.value = !isOpen.value;
+  isSubmit.value = true;
 };
 
 const closeModal = (data) => {

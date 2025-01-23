@@ -10,7 +10,9 @@
         <div
           class="flex flex-row justify-between items-center border-b mb-4 p-4"
         >
-          <h2 class="text-2xl font-semibold">Create Product</h2>
+          <h2 class="text-2xl font-semibold">
+            {{ isSubmit ? "Create Product" : "Update Product" }}
+          </h2>
           <button
             type="button"
             class="text-black/50 hover:text-red-600 transition-colors ease"
@@ -20,7 +22,7 @@
           </button>
         </div>
         <form
-          @submit.prevent="createProduct"
+          @submit.prevent="createOrUpdateProduct"
           class="flex flex-col flex-grow min-h-0 gap-y-4 p-4"
           enctype="multipart/form-data"
         >
@@ -112,8 +114,20 @@
             ></textarea>
           </div>
           <div class="flex justify-end py-4">
-            <button class="btn btn-success text-white btn-wide" type="submit">
+            <button
+              class="btn btn-success text-white btn-wide"
+              type="submit"
+              v-if="isSubmit"
+            >
               <span v-if="!isLoading">Submit</span>
+              <span v-else class="loading loading-spinner loading-lg"></span>
+            </button>
+            <button
+              class="btn btn-info text-white btn-wide"
+              type="submit"
+              v-else
+            >
+              <span v-if="!isLoading">Update</span>
               <span v-else class="loading loading-spinner loading-lg"></span>
             </button>
           </div>
@@ -124,11 +138,19 @@
 </template>
 
 <script setup>
+import { apiClient } from "@/services/apiClient";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { useProductStore } from "@/stores/productStore";
 import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import { computed, onMounted, reactive, ref, shallowReactive } from "vue";
+import {
+  computed,
+  onMounted,
+  reactive,
+  ref,
+  shallowReactive,
+  watch,
+} from "vue";
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
@@ -152,11 +174,29 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isSubmit: {
+    type: Boolean,
+    default: true,
+  },
+  item: {
+    type: Object,
+    default: {},
+  },
+});
+
+const edit = computed(() => {
+  console.log(props.item);
+  return props.item;
 });
 const emits = defineEmits(["close", "getInfo"]);
 
 const src = ref("");
 const file = ref("");
+const tokenUser = ref(
+  localStorage.getItem("token")
+    ? JSON.parse(localStorage.getItem("token"))
+    : null
+);
 
 const isLoading = ref(false);
 
@@ -193,11 +233,10 @@ const getCategory = async () => {
   }
 };
 
-const createProduct = async () => {
+const updateProduct = async () => {
   v$.value.$touch();
   if (v$.value.$invalid) return;
   isLoading.value = !isLoading.value;
-
   try {
     const formData = new FormData();
     formData.append("name", payload.name);
@@ -206,7 +245,6 @@ const createProduct = async () => {
     formData.append("stock", payload.stock);
     formData.append("category_id", payload.category);
     formData.append("description", payload.description);
-    const response = await productStore.createProduct(formData);
 
     console.log(response);
   } catch (error) {
@@ -217,6 +255,57 @@ const createProduct = async () => {
     closeModal();
   }
 };
+
+const createOrUpdateProduct = async () => {
+  v$.value.$touch();
+  if (v$.value.$invalid) return;
+  isLoading.value = !isLoading.value;
+  let response;
+
+  try {
+    const formData = new FormData();
+    formData.append("name", payload.name);
+    if (payload.image) {
+      formData.append("image", payload.image);
+    }
+    formData.append("price", payload.price);
+    formData.append("stock", payload.stock);
+    formData.append("category_id", payload.category);
+    formData.append("description", payload.description);
+    if (props.isSubmit) {
+      response = await productStore.createProduct(formData);
+    } else {
+      formData.append("_method", "PUT");
+      response = await apiClient.post(`/product/${props.item.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${tokenUser.value}`,
+        },
+      });
+    }
+
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+    emits("getInfo", { status: "error", message: error });
+  } finally {
+    isLoading.value = !isLoading.value;
+    closeModal();
+  }
+};
+
+watch(
+  () => {
+    return props.item;
+  },
+  () => {
+    payload.name = props.item.name;
+    payload.category = props.item.category_id;
+    payload.description = props.item.description;
+    payload.price = props.item.price;
+    src.value = props.item.image;
+    payload.stock = props.item.stock;
+  }
+);
 
 onMounted(async () => {
   await getCategory();
