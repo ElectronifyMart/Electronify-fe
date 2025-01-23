@@ -17,6 +17,12 @@ export const useAuthStore = defineStore("counter", () => {
       : null
   );
 
+  const profilePicture = ref(
+    localStorage.getItem("profile")
+      ? JSON.parse(localStorage.getItem("profile"))
+      : null
+  );
+
   const LoginUser = async (inputData) => {
     try {
       const { email, password } = inputData;
@@ -31,8 +37,6 @@ export const useAuthStore = defineStore("counter", () => {
 
       localStorage.setItem("token", JSON.stringify(tokenUser.value));
       localStorage.setItem("user", JSON.stringify(currentUser.value));
-
-      router.replace("/");
       return data;
     } catch (error) {
       throw error;
@@ -124,6 +128,24 @@ export const useAuthStore = defineStore("counter", () => {
     } catch (error) {}
   };
 
+  const profileUser = async (inputData) => {
+    console.log(tokenUser.value);
+    try {
+      const response = await apiClient.post("/profile", inputData, {
+        headers: {
+          Authorization: `Bearer ${tokenUser.value}`,
+        },
+      });
+
+      const profileData = response.data.data;
+      localStorage.setItem("profile", JSON.stringify(profileData));
+      profilePicture.value = profileData.image || null;
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     LoginUser,
     RegisterUser,
@@ -132,5 +154,7 @@ export const useAuthStore = defineStore("counter", () => {
     verifikasiAccount,
     currentUser,
     LogoutUser,
+    profileUser,
+    profilePicture,
   };
 });

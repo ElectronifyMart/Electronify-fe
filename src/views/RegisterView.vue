@@ -7,6 +7,40 @@
       </div>
       <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
         <form class="card-body" @submit.prevent="handleRegist">
+          <!-- Success Alert -->
+          <div v-if="alertType === 'success'" class="alert alert-success">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{{ alertMessage }}</span>
+          </div>
+          <!-- Error Alert -->
+          <div v-if="alertType === 'error'" class="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+            <span>{{ alertMessage }}</span>
+          </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text">Name</span>
@@ -83,8 +117,23 @@ const user = reactive({
 const handleRegist = async () => {
   try {
     const response = await authStorage.RegisterUser(user);
-    return response;
+    alertMessage.value = response.message || "Login successful";
+    alertType.value = "success";
+    setTimeout(() => {
+      alertMessage.value = "";
+      alertType.value = "";
+      router.push("/login");
+    }, 1500);
+    authStorage.generateOtpCode(authStorage.currentUser.email);
   } catch (error) {
+    alertMessage.value =
+      error.response?.data?.message || "An error occurred during login.";
+    alertType.value = "error";
+
+    setTimeout(() => {
+      alertMessage.value = "";
+      alertType.value = "";
+    }, 3000);
     console.log(error);
   }
 };
