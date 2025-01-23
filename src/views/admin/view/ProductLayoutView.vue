@@ -29,7 +29,7 @@
         </div>
     </header>
     <main class="flex flex-wrap gap-4 justify-center">
-        <div v-if="info.status" role="alert" class="alert" :class="info.status == 'success' ? 'alert-success' : 'alert-danger' ">
+        <div v-if="alert" role="alert" class="alert" :class="info.status == 'success' ? 'alert-success' : 'alert-danger' ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -37,7 +37,7 @@
             </svg>
             <span>{{ info.message }}</span>
         </div>
-        <div class="flex-wrap justify-center flex gap-4" v-if="products.length === 0">
+        <div class="flex-wrap justify-center flex gap-4" v-if="isLoading">
             <div class="flex w-80 max-md:w-72 flex-col gap-4" v-for="skel in 3">
                 <div class="skeleton h-48 w-full"></div>
                 <div class="skeleton h-4 w-28"></div>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="card card-compact bg-base-100 w-80 shadow-xl relative max-md:w-72 overflow-hidden"
-            v-for="product in products" v-else>
+            v-for="product in products" v-if="products.length > 0">
             <div v-if="!product.image" class="w-full h-44 bg-slate-100 flex justify-center items-center text-black/20">
                 <h1 class="text-xl font-semibold uppercase">Electronify</h1>
             </div>
@@ -67,6 +67,9 @@
                 <font-awesome-icon icon="fa-solid fa-rectangle-xmark" size="xl" />
             </button>
         </div>
+        <div v-else>
+            Data not available
+        </div>
 
     </main>
 </template>
@@ -74,7 +77,7 @@
 <script setup>
 import ModalProduct from '@/components/modal/ModalProduct.vue';
 import { useProductStore } from '@/stores/productStore';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import formatterRupiah from '@/services/formatterRupiah';
 
 const productStore = useProductStore()
@@ -85,13 +88,17 @@ const openModalProduct = () => {
     isOpen.value = !isOpen.value
 }
 
-const closeModal = (data) => {
+const closeModal = async (data) => {
     isOpen.value = data
+    await getProducts()
 }
+
+const isLoading = ref(false)
 
 const products = ref([])
 
 const getProducts = async () => {
+    isLoading.value = !isLoading.value
     try {
         const response = await productStore.getProducts()
         products.value = response.data
@@ -100,6 +107,8 @@ const getProducts = async () => {
     } catch (error) {
         console.log(error);
 
+    }finally{
+        isLoading.value = !isLoading.value
     }
 }
 
@@ -114,8 +123,11 @@ const getInfoResponse = ({status,message})=>{
     alert.value = !alert.value
     info.status = status
     info.message = message
-    
 }
+
+watch(()=>alert.value,()=>{
+    setTimeout(()=>alert.value = false,1000)
+})
 
 onMounted(async () => {
     await getProducts()

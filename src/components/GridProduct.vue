@@ -29,10 +29,6 @@
                 <button class="btn btn-neutral" type="button" @click="detailProduct(item.id)">
                   Detail
                 </button>
-
-                <button class="btn btn-info w-full" type="button">
-                  Add to Cart
-                </button>
               </div>
             </div>
           </div>
@@ -81,7 +77,7 @@ const createOrder = async (data) => {
   try {
     const response = await storePayment.order(data)
     console.log(response);
-    await window.snap.pay(response.data.token, {
+    await window.snap.pay(response.data.snap_token, {
 
       onSuccess: function (result) { console.log('success'); console.log(result); },
       onPending: function (result) { console.log('pending'); console.log(result); },

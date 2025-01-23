@@ -13,6 +13,7 @@ import UserLayoutView from "@/views/user/UserLayoutView.vue";
 
 import DetailProductView from "@/views/user/DetailProductView.vue";
 import { createRouter, createWebHistory } from "vue-router";
+import ListOrderView from "@/views/user/ListOrderView.vue";
 
 const routes = [
   { path: "/", component: UserLayoutView },
@@ -53,6 +54,7 @@ const routes = [
     ],
   },
   { path: "/products", component: ProductView },
+  { path: "/order/list", component: ListOrderView },
 ];
 
 const router = createRouter({

@@ -9,7 +9,13 @@ export const useProductStore = defineStore('products',{
     actions : {
         async createProduct(payload){
             try {
-                const response = await apiClient.post('product',payload)
+                const response = await apiClient.post('product',payload,{
+                    headers : {
+                        Authorization : `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                console.log(localStorage.getItem('token'));
+                
                 return response.data
             } catch (error) {
                 throw error

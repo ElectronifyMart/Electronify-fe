@@ -40,6 +40,7 @@
             <button class="btn btn-primary">
               <font-awesome-icon icon="fa-solid fa-user" /> Login
             </button>
+            🌤 
           </div>
         </form>
       </div>
