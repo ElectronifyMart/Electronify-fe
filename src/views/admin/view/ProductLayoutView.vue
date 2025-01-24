@@ -177,7 +177,10 @@
         <p>{{ product.description ?? "Description not available" }}</p>
         <p>Stock : {{ product.stock }}</p>
         <div class="card-actions justify-end">
-          <button class="btn btn-accent btn-md text-white btn-outline">
+          <button
+            class="btn btn-accent btn-md text-white btn-outline"
+            @click="editModalProduct(product)"
+          >
             Edit
           </button>
         </div>
