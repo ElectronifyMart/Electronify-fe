@@ -114,15 +114,12 @@ const defaultImage =
 
 const profile = JSON.parse(localStorage.getItem("profile")) || {};
 const test = profile.image || defaultImage;
-
 const searchQuery = computed({
   get: () => productStore.searchQuery,
   set: (value) => productStore.updateSearchQuery(value),
 });
 
-const showSidebar = async () => {
-  const res = await store.getAccount();
-  console.log(res);
+const showSidebar = () => {
   if (store.tokenUser == null) {
     alert("Belum Login");
     router.replace("/");
