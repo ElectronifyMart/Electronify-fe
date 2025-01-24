@@ -94,7 +94,7 @@
               >
             </label>
           </div>
-          <div class="form-control mt-6">
+          <div class="form-control">
             <button class="btn btn-primary">
               <span v-if="!isLoading"
                 ><font-awesome-icon icon="fa-solid fa-user" /> Register</span

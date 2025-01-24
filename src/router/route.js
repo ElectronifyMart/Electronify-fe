@@ -11,10 +11,11 @@ import VerificationView from "@/views/VerificationView.vue";
 
 import UserLayoutView from "@/views/user/UserLayoutView.vue";
 
+import GridProduct from "@/components/GridProduct.vue";
 import { useAuthStore } from "@/stores/authStorage";
 import DetailProductView from "@/views/user/DetailProductView.vue";
-import { createRouter, createWebHistory } from "vue-router";
 import ListOrderView from "@/views/user/ListOrderView.vue";
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   { path: "/", component: UserLayoutView },
@@ -60,7 +61,8 @@ const routes = [
     ],
   },
   { path: "/products", component: ProductView },
-  { path: "/order/list", component: ListOrderView },
+  { path: "/grid/products", component: GridProduct, meta: { isAuth: true } },
+  { path: "/order/list", component: ListOrderView, meta: { isAuth: true } },
 ];
 
 const router = createRouter({
