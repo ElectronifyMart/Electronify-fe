@@ -88,7 +88,7 @@ const router = useRouter();
 
 const storePayment = usePaymentStore();
 const productStore = useProductStore();
-const store = useAuthStore();
+const sstore = useAuthStore();
 
 const isLoading = ref(false);
 const detailsProduct = ref({});

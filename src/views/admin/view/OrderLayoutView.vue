@@ -79,4 +79,19 @@ onMounted(async () => {
 })
 </script>
 
+<<<<<<< HEAD
 <style scoped></style>
+=======
+<style scoped>
+</style>
+
+
+
+
+
+
+
+
+
+ 
+>>>>>>> 680dceb7b405710719f469d24b56d389d533336a
