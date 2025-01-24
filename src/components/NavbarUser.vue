@@ -33,6 +33,8 @@
             <div v-if="store.currentUser">
               <li><button @click="showSidebar">Profile</button></li>
               <li><button @click="handleLogout">Logout</button></li>
+              <li><button>Product</button></li>
+              <li><button>History</button></li>
             </div>
             <div v-else>
               <li>
@@ -50,33 +52,12 @@
         </div>
       </div>
 
-      <!-- Search Bar -->
-      <div class="navbar-center">
-        <label
-          class="input input-bordered flex items-center gap-2 lg:w-[585px] md:w-[350px] sm:w-[250px]"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            class="h-4 w-4 opacity-70"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <input
-            v-model="searchQuery"
-            type="text"
-            class="grow"
-            placeholder="Search"
-          />
-        </label>
-      </div>
-
       <div class="navbar-end">
+        <div class="flex items-center gap-x-2 mr-6">
+          <router-link :to="{ path: '/order/list' }">
+            <button class="btn btn-ghost btn-sm max-md:hidden">History</button>
+          </router-link>
+        </div>
         <div class="dropdown dropdown-end" v-if="store.currentUser">
           <div
             tabindex="0"
@@ -86,7 +67,7 @@
             <div class="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-                :src="test ?? defaultImage"
+                :src="test || defaultImage"
               />
             </div>
           </div>
@@ -130,10 +111,9 @@ const emit = defineEmits(["sidebar"]);
 const productStore = useProductStore();
 const defaultImage =
   "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
-const profilePicture = computed(() => {
-  return JSON.parse(localStorage.getItem("profile"));
-});
-const test = profilePicture.value.image;
+
+const profile = JSON.parse(localStorage.getItem("profile")) || {};
+const test = profile.image || defaultImage;
 const searchQuery = computed({
   get: () => productStore.searchQuery,
   set: (value) => productStore.updateSearchQuery(value),

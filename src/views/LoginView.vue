@@ -72,14 +72,13 @@
               </RouterLink>
             </label>
           </div>
-          <div class="form-control mt-6">
+          <div class="form-control">
             <button class="btn btn-primary" severity="secondary">
               <span v-if="!isLoading"
                 ><font-awesome-icon icon="fa-solid fa-user" /> Login</span
               >
               <span v-else class="loading loading-infinity loading-lg"></span>
             </button>
-            🌤 
           </div>
         </form>
       </div>

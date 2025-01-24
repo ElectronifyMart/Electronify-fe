@@ -71,6 +71,7 @@ export const useAuthStore = defineStore("counter", () => {
       const { user } = response;
       localStorage.setItem("user", JSON.stringify(user));
       currentUser.value = user;
+      return user;
     } catch (error) {
       console.log(error);
     }
@@ -124,6 +125,7 @@ export const useAuthStore = defineStore("counter", () => {
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("profile");
     } catch (error) {}
   };
 
@@ -150,6 +152,7 @@ export const useAuthStore = defineStore("counter", () => {
     RegisterUser,
     tokenUser,
     generateOtpCode,
+    getAccount,
     verifikasiAccount,
     currentUser,
     LogoutUser,
